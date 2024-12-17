@@ -1,0 +1,13 @@
+name: 'priorauth'
+services:
+  streamlit:
+    build: 
+      context: ./
+      dockerfile: devops/container/Dockerfile
+      platforms:
+        - linux/amd64
+    ports:
+      - "8081:8501"
+    env_file:
+      - .env  
+      

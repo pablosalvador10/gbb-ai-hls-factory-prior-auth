@@ -28,7 +28,7 @@ permissions:
 
 env:
   deployStackName: 'PriorAuth-Infra'
-  deploymentPath: 'devops/container'
+  deploymentPath: './'
   scenarioName: 'ase-multitenant'
   containerRegistry: 'jleemngenvmcap'
   acrRepoName: 'priorAuth/frontend'
