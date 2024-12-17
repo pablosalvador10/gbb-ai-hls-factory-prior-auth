@@ -55,7 +55,7 @@ jobs:
         
     - run: |
         ls -al
-        docker compose build .
+        docker compose build
 
         docker tag priorauth-streamlit ${{ env.containerRegistry }}.azurecr.io/${{ env.acrRepoName }}:${{ github.sha }}
         docker push ${{ env.containerRegistry }}.azurecr.io/${{ env.acrRepoName }}:${{ github.sha }}     
