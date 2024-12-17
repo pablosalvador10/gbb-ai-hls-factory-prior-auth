@@ -1,4 +1,4 @@
-FROM python:3.11-slim-buster
+FROM python:3.11-slim-bullseye
 
 WORKDIR /app
 
@@ -19,9 +19,9 @@ COPY ["utils/data/cases/003/a/doctor_notes/003_a (note) .pdf", "/app/utils/data/
 COPY ["utils/data/cases/003/a/labs/003_a (labs).pdf", "/app/utils/data/cases/003/a/labs/003_a (labs).pdf"]
 COPY ["utils/data/cases/003/a/pa_form/003_a (form).pdf", "/app/utils/data/cases/003/a/pa_form/003_a (form).pdf"]
 
-#Build Streamlit
+# Build Streamlit
 RUN apt-get update && \
-    apt-get -y install gcc mono-mcs && \
+    apt-get -y install gcc mono-mcs python3-dev && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /app/.streamlit
 COPY app/settings/config.toml /app/.streamlit/config.toml
