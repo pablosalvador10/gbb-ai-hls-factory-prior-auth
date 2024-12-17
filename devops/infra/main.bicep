@@ -1,3 +1,4 @@
+// Execute this main file to deploy Prior Authorization related resources in a basic configuration
 @minLength(2)
 @maxLength(12)
 @description('Name for the PriorAuth resource and used to derive the name of dependent resources.')
@@ -7,15 +8,18 @@ param priorAuthName string = 'priorAuth'
 param tags object = {}
 
 @description('ACR container image url')
-param acrContainerImage string = 'mcr.microsoft.com/k8se/quickstart:latest'
+@secure()
+param acrContainerImage string = ''
 
 @description('Admin user for the ACR registry of the container image')
 @secure()
-param acrUsername string
+@minLength(0)
+param acrUsername string = ''
 
 @description('Admin password for the ACR registry of the container image')
 @secure()
-param acrPassword string
+@minLength(0)
+param acrPassword string = ''
 
 @description('Admin password for the cluster')
 @secure()
@@ -51,26 +55,11 @@ param embeddingModelDimension string = '1536'
 @description('Storage Blob Container name to land the files for Prior Auth')
 param storageBlobContainerName string = 'default'
 
-@description('AAD Client ID (App Registration ID) for the Container App.')
-param aadClientId string = ''
-
-@description('AAD Client Secret for the Container App.')
-@secure()
-param aadClientSecret string = ''
-
-@description('AAD Tenant ID for the Container App.')
-param aadTenantId string = ''
-
-@description('Allowed provider scope for the identity. Only Microsoft AAD is currently supported. Also only select if plan on provisioning with Entra account, personal accounts do not have required permissions.')
-@allowed([
-  'aad' // Microsoft Azure Active Directory
-  'none' // Placeholder for future support (e.g., Google, GitHub)
-])
-param authProvider string = 'none'
-
 var name = toLower('${priorAuthName}')
 var uniqueSuffix = substring(uniqueString(resourceGroup().id), 0, 7)
 var storageServiceName = toLower(replace('storage-${name}-${uniqueSuffix}', '-', ''))
+var encodedPassword = uriComponent(cosmosAdministratorPassword)
+
 
 // @TODO: Replace with AVM module
 module docIntelligence 'modules/docintelligence.bicep' = {
@@ -158,6 +147,24 @@ module logAnalytics 'modules/loganalytics.bicep' = {
     tags: tags
   }
 }
+module registry 'br/public:avm/res/container-registry/registry:0.6.0' = {
+  name: 'registry-${name}-${uniqueSuffix}-deployment'
+  params: {
+    name: 'registry-${name}-${uniqueSuffix}'
+    acrSku: 'Standard'
+    location: location
+    tags: tags
+    roleAssignments: [
+      {
+        name: '${containerApp.outputs.containerAppName}-acr-pull'
+        principalId: containerApp.outputs.containerAppIdentityPrincipalId
+        principalType: 'ServicePrincipal'
+        roleDefinitionIdOrName: 'AcrPull'
+      }
+    ]
+  }
+}
+
 
 module containerApp 'modules/containerapp.bicep' = {
   name: 'containerapp-${name}-${uniqueSuffix}-deployment'
@@ -166,12 +173,10 @@ module containerApp 'modules/containerapp.bicep' = {
     tags: tags
     containerAppName: 'pe-fe-${name}-${uniqueSuffix}'
     acrContainerImage: acrContainerImage
-    acrUsername: acrUsername
+    // If empty values for acrUsername and acrPassword, the system assigned identity
+    // will be leveraged to pull from the ACR
+    acrUsername: acrUsername 
     acrPassword: acrPassword
-    authProvider: authProvider
-    aadClientId: aadClientId
-    aadTenantId: aadTenantId
-    aadClientSecret: aadClientSecret
     containerEnvArray: [
       {
         name: 'AZURE_OPENAI_KEY'
@@ -193,7 +198,7 @@ module containerApp 'modules/containerapp.bicep' = {
         name: 'AZURE_OPENAI_CHAT_DEPLOYMENT_ID'
         value: 'gpt-4o'
       }
-      {
+      { 
         name: 'AZURE_OPENAI_CHAT_DEPLOYMENT_01'
         value: 'gpt-4o'
       }
@@ -261,7 +266,7 @@ module containerApp 'modules/containerapp.bicep' = {
         name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
         value: appInsights.outputs.appInsightsConnectionString
       }
-    ]
+    ]    
     environmentName: 'managedEnv-${name}-${uniqueSuffix}'
     appInsightsWorkspaceId: logAnalytics.outputs.logAnalyticsId
     workloadProfileName: 'Consumption'
