@@ -44,7 +44,7 @@ jobs:
     outputs:
       deployStackName: ${{ env.deployStackName }}
       region: ${{ env.region }}
-      modulePath: ${{ env.deploymentPath }}
+      modulePath: ${{ env.deploymentPath }}/main.bicep
       bicepParamPath: ${{ env.deploymentPath }}/main.bicepparam
       bicepAdditionalParams: -p embeddingModel=${{ env.embeddingModel }} -p acrContainerImage=${{ env.acrContainerImage }} -p  cosmosAdministratorPassword=${{ secrets.COSMOS_ADMINISTRATOR_PASSWORD }} --deny-settings-mode 'none'
 
