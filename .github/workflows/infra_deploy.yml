@@ -27,7 +27,7 @@ permissions:
 
 env:
   deployStackName: 'PriorAuth-Infra'
-  deploymentPath: 'devops/infra/main.bicep'
+  deploymentPath: 'devops/infra'
   scenarioName: 'ase-multitenant'
   region: 'westus2'
   # webAppPlanSKU is the only parameter that is overridden for ASEv3
@@ -45,8 +45,8 @@ jobs:
       deployStackName: ${{ env.deployStackName }}
       region: ${{ env.region }}
       modulePath: ${{ env.deploymentPath }}
-      bicepParamPath: ${{ env.deploymentPath }}/main.parameters.jsonc
-      bicepAdditionalParams: -p embeddingModel=${{ env.embeddingModel }} -p acrContainerImage=${{ env.acrContainerImage }} --deny-settings-mode 'none'
+      bicepParamPath: ${{ env.deploymentPath }}/main.bicepparam
+      bicepAdditionalParams: -p embeddingModel=${{ env.embeddingModel }} -p acrContainerImage=${{ env.acrContainerImage }} -p  cosmosAdministratorPassword=${{ secrets.COSMOS_ADMINISTRATOR_PASSWORD }} --deny-settings-mode 'none'
 
   call-workflow-passing-data:
     name: 'Bicep CICD'
