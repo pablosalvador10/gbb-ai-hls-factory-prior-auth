@@ -1,4 +1,4 @@
-name: '🚀 Prior Authorization - Bicep Infrastructure Deployment 🌐'
+name: '🏗️ Prior Authorization - Bicep Infrastructure Deployment 💪'
 
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'

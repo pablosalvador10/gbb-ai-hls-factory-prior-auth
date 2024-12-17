@@ -96,7 +96,8 @@ jobs:
             --location ${{ inputs.region }} \
             --template-file ${{ inputs.modulePath }} \
             --parameters ${{ inputs.bicepParamPath }} \
-            ${{ inputs.bicepAdditionalParams }}
+            ${{ inputs.bicepAdditionalParams }} \
+            --action-on-unmanage none
 
       # Potential Deny Settings
       # -----------------------------
