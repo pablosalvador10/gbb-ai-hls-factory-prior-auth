@@ -27,11 +27,10 @@ permissions:
   contents: read
 
 env:
-  deployStackName: 'PriorAuth-Infra'
   deploymentPath: './'
   scenarioName: 'ase-multitenant'
   containerRegistry: 'jleemngenvmcap'
-  acrRepoName: 'priorAuth/frontend'
+  acrRepoName: 'priorauth/frontend'
 
 jobs:
   
@@ -54,9 +53,7 @@ jobs:
         az acr login --name ${{ env.containerRegistry }}
         
     - run: |
-        ls -al
         docker compose build
-
         docker tag priorauth-streamlit ${{ env.containerRegistry }}.azurecr.io/${{ env.acrRepoName }}:${{ github.sha }}
         docker push ${{ env.containerRegistry }}.azurecr.io/${{ env.acrRepoName }}:${{ github.sha }}     
     
