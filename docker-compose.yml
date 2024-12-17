@@ -8,6 +8,4 @@ services:
         - linux/amd64
     ports:
       - "8081:8501"
-    env_file:
-      - .env  
       
