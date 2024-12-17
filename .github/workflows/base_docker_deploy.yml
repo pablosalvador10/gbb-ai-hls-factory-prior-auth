@@ -11,7 +11,7 @@ on:
     branches:
       - main
     paths:
-      - '.github/workflows/base_docker.yml'
+      - '.github/workflows/base_docker_deploy.yml'
       - 'devops/container'
       - 'src'
       - 'app'
@@ -54,7 +54,7 @@ jobs:
         az acr login --name ${{ env.containerRegistry }}
         
     - run: |
-        # docker build ${{ env.deploymentPath }} -t ${{ env.containerRegistry }}.azurecr.io/${{ env.acrRepoName }}:${{ github.sha }}
+        
         cd ${{ env.deploymentPath }}
         docker compose build .
 

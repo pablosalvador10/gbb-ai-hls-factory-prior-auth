@@ -18,8 +18,9 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           environment-file: speech-ai-azure-services  # Create an environment.yml file
-          activate-environment: 
+          activate-environment: cicd
           auto-activate-base: false
+          python-version: 3.9
 
       - name: Activate Conda Node 🔧
         run: |
