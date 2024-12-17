@@ -55,7 +55,10 @@ jobs:
         
     - run: |
         # docker build ${{ env.deploymentPath }} -t ${{ env.containerRegistry }}.azurecr.io/${{ env.acrRepoName }}:${{ github.sha }}
-        docker compose build ${{ env.deploymentPath }} -t ${{ env.containerRegistry }}.azurecr.io/${{ env.acrRepoName }}:${{ github.sha }} 
+        cd ${{ env.deploymentPath }}
+        docker compose build .
+
+        docker tag priorauth-streamlit ${{ env.containerRegistry }}.azurecr.io/${{ env.acrRepoName }}:${{ github.sha }}
         docker push ${{ env.containerRegistry }}.azurecr.io/${{ env.acrRepoName }}:${{ github.sha }}     
     
     # - name: Build and deploy Container App

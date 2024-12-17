@@ -1,4 +1,4 @@
-name: priorAuth-app
+name: 'priorAuth'
 services:
   streamlit:
     build: 
