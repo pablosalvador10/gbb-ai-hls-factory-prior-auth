@@ -54,8 +54,7 @@ jobs:
         az acr login --name ${{ env.containerRegistry }}
         
     - run: |
-        
-        cd ${{ env.deploymentPath }}
+        ls -al
         docker compose build .
 
         docker tag priorauth-streamlit ${{ env.containerRegistry }}.azurecr.io/${{ env.acrRepoName }}:${{ github.sha }}
