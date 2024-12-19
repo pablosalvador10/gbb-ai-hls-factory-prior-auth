@@ -50,7 +50,7 @@ jobs:
 
   call-workflow-passing-data:
     name: 'Bicep CICD'
-    needs: 
+    needs:
     - prepare-environment
     uses: ./.github/workflows/.template.bicep.yml
     with:

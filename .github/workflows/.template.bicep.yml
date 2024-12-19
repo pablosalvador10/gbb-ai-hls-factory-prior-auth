@@ -55,7 +55,7 @@ jobs:
       - name: Run Bicep linter
         run: az bicep build --file ${{ inputs.modulePath }}
         # working-directory: ${{ inputs.modulePath }}
-      
+
       # TODO: Buildout PSRule policies
       # - name: Run PSRule analysis
       #   uses: microsoft/ps-rule@v2.9.0
@@ -72,14 +72,14 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@main
-    
+
       # Log into Azure via OIDC
       - uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      
+
       - name: Deploy Bicep Scenario
         run: |
           # If Destroy flag is set, delete the stack
@@ -105,4 +105,4 @@ jobs:
       # deny-settings-apply-to-child-scopes: Deny settings are applied to child Azure management scopes.
       # deny-settings-excluded-actions: List of role-based access control (RBAC) management operations excluded from the deny settings. Up to 200 actions are allowed.
       # deny-settings-excluded-principals: List of Microsoft Entra principal IDs excluded from the lock. Up to five principals are allowed.
-      
+

@@ -9,7 +9,7 @@ param tags object = {}
 
 @description('ACR container image url')
 @secure()
-param acrContainerImage string = ''
+param acrContainerImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
 
 @description('Admin user for the ACR registry of the container image')
 @secure()
@@ -20,6 +20,8 @@ param acrUsername string = ''
 @secure()
 @minLength(0)
 param acrPassword string = ''
+
+param streamlitExists bool = false
 
 @description('Admin password for the cluster')
 @secure()
@@ -58,8 +60,6 @@ param storageBlobContainerName string = 'default'
 var name = toLower('${priorAuthName}')
 var uniqueSuffix = substring(uniqueString(resourceGroup().id), 0, 7)
 var storageServiceName = toLower(replace('storage-${name}-${uniqueSuffix}', '-', ''))
-var encodedPassword = uriComponent(cosmosAdministratorPassword)
-
 
 // @TODO: Replace with AVM module
 module docIntelligence 'modules/docintelligence.bicep' = {
@@ -147,37 +147,52 @@ module logAnalytics 'modules/loganalytics.bicep' = {
     tags: tags
   }
 }
-module registry 'br/public:avm/res/container-registry/registry:0.6.0' = {
+
+module appIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.2.1' = {
+  name: 'uai-app-${name}-${uniqueSuffix}-deployment'
+  params: {
+    name: 'uai-app-${name}-${uniqueSuffix}'
+    location: location
+  }
+}
+
+module registry 'br/public:avm/res/container-registry/registry:0.1.1' = {
   name: 'registry-${name}-${uniqueSuffix}-deployment'
   params: {
-    name: 'registry-${name}-${uniqueSuffix}'
-    acrSku: 'Standard'
+    name: toLower(replace('registry-${name}-${uniqueSuffix}', '-', ''))
+    acrAdminUserEnabled: false
+    publicNetworkAccess: 'Enabled'
     location: location
     tags: tags
     roleAssignments: [
       {
-        name: '${containerApp.outputs.containerAppName}-acr-pull'
-        principalId: containerApp.outputs.containerAppIdentityPrincipalId
+        principalId: appIdentity.outputs.principalId
         principalType: 'ServicePrincipal'
-        roleDefinitionIdOrName: 'AcrPull'
+        roleDefinitionIdOrName: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
       }
     ]
   }
 }
-
 
 module containerApp 'modules/containerapp.bicep' = {
   name: 'containerapp-${name}-${uniqueSuffix}-deployment'
   params: {
     location: location
     tags: tags
+    streamlitExists: streamlitExists
     containerAppName: 'pe-fe-${name}-${uniqueSuffix}'
+    acrLoginServer: registry.outputs.loginServer
     acrContainerImage: acrContainerImage
     // If empty values for acrUsername and acrPassword, the system assigned identity
     // will be leveraged to pull from the ACR
-    acrUsername: acrUsername 
+    acrUsername: acrUsername
     acrPassword: acrPassword
+    userAssignedIdentityId: appIdentity.outputs.resourceId
     containerEnvArray: [
+      {
+        name: 'AZURE_CLIENT_ID'
+        value: appIdentity.outputs.clientId
+      }
       {
         name: 'AZURE_OPENAI_KEY'
         value: openAiService.outputs.aiServicesKey
@@ -198,7 +213,7 @@ module containerApp 'modules/containerapp.bicep' = {
         name: 'AZURE_OPENAI_CHAT_DEPLOYMENT_ID'
         value: 'gpt-4o'
       }
-      { 
+      {
         name: 'AZURE_OPENAI_CHAT_DEPLOYMENT_01'
         value: 'gpt-4o'
       }
@@ -266,9 +281,45 @@ module containerApp 'modules/containerapp.bicep' = {
         name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
         value: appInsights.outputs.appInsightsConnectionString
       }
-    ]    
+    ]
     environmentName: 'managedEnv-${name}-${uniqueSuffix}'
     appInsightsWorkspaceId: logAnalytics.outputs.logAnalyticsId
     workloadProfileName: 'Consumption'
   }
 }
+output AZURE_OPENAI_ENDPOINT string = openAiService.outputs.aiServicesEndpoint
+output AZURE_OPENAI_API_VERSION string = openAiApiVersion
+output AZURE_OPENAI_EMBEDDING_DEPLOYMENT string = embeddingModel.name
+output AZURE_OPENAI_CHAT_DEPLOYMENT_ID string = 'gpt-4o'
+output AZURE_OPENAI_CHAT_DEPLOYMENT_01 string = 'gpt-4o'
+output AZURE_OPENAI_EMBEDDING_DIMENSIONS string = embeddingModelDimension
+output AZURE_SEARCH_SERVICE_NAME string = searchService.outputs.searchServiceName
+output AZURE_SEARCH_INDEX_NAME string = 'ai-policies-index'
+output AZURE_AI_SEARCH_ADMIN_KEY string = searchService.outputs.searchServicePrimaryKey
+output AZURE_AI_SEARCH_SERVICE_ENDPOINT string = searchService.outputs.searchServiceEndpoint
+output AZURE_STORAGE_ACCOUNT_KEY string = storageAccount.outputs.storageAccountPrimaryKey
+output AZURE_BLOB_CONTAINER_NAME string = storageBlobContainerName
+output AZURE_STORAGE_ACCOUNT_NAME string = storageAccount.outputs.storageAccountName
+output AZURE_STORAGE_CONNECTION_STRING string = storageAccount.outputs.storageAccountPrimaryConnectionString
+output AZURE_AI_SERVICES_KEY string = multiAccountAiServices.outputs.aiServicesPrimaryKey
+output AZURE_COSMOS_DB_DATABASE_NAME string = 'priorauthsessions'
+output AZURE_COSMOS_DB_COLLECTION_NAME string = 'temp'
+output AZURE_COSMOS_CONNECTION_STRING string = cosmosDb.outputs.mongoConnectionString
+output AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT string = docIntelligence.outputs.aiServicesEndpoint
+output AZURE_DOCUMENT_INTELLIGENCE_KEY string = docIntelligence.outputs.aiServicesKey
+output APPLICATIONINSIGHTS_CONNECTION_STRING string = appInsights.outputs.appInsightsConnectionString
+output AZURE_CONTAINER_REGISTRY_ENDPOINT string = registry.outputs.loginServer
+output AZURE_CONTAINER_ENVIRONMENT_ID string = containerApp.outputs.managedEnvironmentId
+output AZURE_CONTAINER_ENVIRONMENT_NAME string = containerApp.outputs.managedEnvironmentName
+
+output appIdentityPrincipalId string = appIdentity.outputs.principalId
+output appIdentityResourceId string = appIdentity.outputs.resourceId
+output registryName string = registry.outputs.name
+output containerAppName string = containerApp.outputs.containerAppName
+output containerAppEndpoint string = containerApp.outputs.containerAppEndpoint
+output logAnalyticsId string = logAnalytics.outputs.logAnalyticsId
+output storageAccountName string = storageAccount.outputs.storageAccountName
+output searchServiceName string = searchService.outputs.searchServiceName
+output openAiServiceName string = openAiService.outputs.aiServicesName
+output multiAccountAiServiceName string = multiAccountAiServices.outputs.aiServicesName
+output docIntelligenceServiceName string = docIntelligence.outputs.aiServicesName

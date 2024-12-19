@@ -33,35 +33,35 @@ env:
   acrRepoName: 'priorauth/frontend'
 
 jobs:
-  
+
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
     # checkout the repo
-    - name: 'Checkout GitHub Action' 
+    - name: 'Checkout GitHub Action'
       uses: actions/checkout@main
-    
+
     - name: 'Sign in via Azure CLI'
       uses: azure/login@v1
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    
+
     - name: 'Login to Azure Container Registry'
       run: |
         az acr login --name ${{ env.containerRegistry }}
-        
+
     - run: |
         docker compose build
         docker tag priorauth-streamlit ${{ env.containerRegistry }}.azurecr.io/${{ env.acrRepoName }}:${{ github.sha }}
-        docker push ${{ env.containerRegistry }}.azurecr.io/${{ env.acrRepoName }}:${{ github.sha }}     
-    
+        docker push ${{ env.containerRegistry }}.azurecr.io/${{ env.acrRepoName }}:${{ github.sha }}
+
     # - name: Build and deploy Container App
     #   uses: azure/container-apps-deploy-action@v1
     #   with:
-    #     imageToDeploy: ${{ env.containerRegistry }}.azurecr.io/${{ env.acrRepoName }}:${{ github.sha }} 
-        
+    #     imageToDeploy: ${{ env.containerRegistry }}.azurecr.io/${{ env.acrRepoName }}:${{ github.sha }}
+
     - name: Azure logout
       run: |
         az logout

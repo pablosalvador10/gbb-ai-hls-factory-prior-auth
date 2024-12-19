@@ -6,8 +6,8 @@ ENV PYTHONPATH "${PYTHONPATH}:/app"
 
 COPY src /app/src
 COPY app /app/app
-COPY utils/ml_logging.py /app/utils/ml_logging.py 
-COPY utils/__init__.py /app/utils/__init__.py  
+COPY utils/ml_logging.py /app/utils/ml_logging.py
+COPY utils/__init__.py /app/utils/__init__.py
 COPY utils/images/ /app/utils/images/
 COPY utils/data/cases/policies /app/utils/data/cases/policies
 COPY requirements.txt /app/requirements.txt
@@ -32,4 +32,3 @@ EXPOSE 8501
 
 ENTRYPOINT ["streamlit", "run"]
 CMD ["app/streamlit/Home.py"]
-
