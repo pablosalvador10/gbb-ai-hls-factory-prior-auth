@@ -7,14 +7,14 @@ concurrency:
 on:
   workflow_dispatch:
 
-  push:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/base_docker_deploy.yml'
-      - 'devops/container'
-      - 'src'
-      - 'app'
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - '.github/workflows/base_docker_deploy.yml'
+  #     - 'devops/container'
+  #     - 'src'
+  #     - 'app'
 
 #   pull_request:
 #     branches:

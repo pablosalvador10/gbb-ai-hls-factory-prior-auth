@@ -7,13 +7,13 @@ concurrency:
 on:
   workflow_dispatch:
 
-  push:
-    branches:
-      - main
-      - integration/iac
-    paths:
-      - '.github/workflows/infra_deploy.yml'
-      - 'devops/infra'
+  # push:
+  #   branches:
+  #     - main
+  #     - integration/iac
+  #   paths:
+  #     - '.github/workflows/infra_deploy.yml'
+  #     - 'devops/infra'
 
 #   pull_request:
 #     branches:
