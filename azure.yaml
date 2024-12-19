@@ -1,0 +1,186 @@
+yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: gbb-ai-hls-factory-prior-auth
+metadata:
+    template: priorAuth-aca@1.11.0
+services:
+    streamlit:
+        project: app/streamlit
+        host: containerapp
+        language: python
+        docker:
+            path: ../../Dockerfile
+            context: ../../
+pipeline:
+  provider: github
+hooks:
+  # predeploy:
+  #   posix:
+  #     shell: sh
+  #     interactive: true
+  #     continueOnError: false
+  #     run: |
+
+  #   windows:
+  #     shell: pwsh
+  #     interactive: true
+  #     continueOnError: false
+  #     run: |
+  #       echo "Predeploy hook"
+  # postdeploy:
+  #   posix:
+  #     shell: sh
+  #     interactive: true
+  #     continueOnError: false
+  #     run: |
+  #       azd env refresh
+  #       az acr login --name $(azd env get-value AZURE_CONTAINER_REGISTRY_ENDPOINT)
+  #       env_vars=$(cat <<EOF
+  #         AZURE_OPENAI_ENDPOINT=$(azd env get-value AZURE_OPENAI_ENDPOINT)
+  #         AZURE_OPENAI_API_VERSION=$(azd env get-value AZURE_OPENAI_API_VERSION)
+  #         AZURE_OPENAI_EMBEDDING_DEPLOYMENT=$(azd env get-value AZURE_OPENAI_EMBEDDING_DEPLOYMENT)
+  #         AZURE_OPENAI_CHAT_DEPLOYMENT_ID=$(azd env get-value AZURE_OPENAI_CHAT_DEPLOYMENT_ID)
+  #         AZURE_OPENAI_EMBEDDING_DIMENSIONS=$(azd env get-value AZURE_OPENAI_EMBEDDING_DIMENSIONS)
+  #         AZURE_SEARCH_SERVICE_NAME=$(azd env get-value AZURE_SEARCH_SERVICE_NAME)
+  #         AZURE_SEARCH_INDEX_NAME=$(azd env get-value AZURE_SEARCH_INDEX_NAME)
+  #         AZURE_AI_SEARCH_SERVICE_ENDPOINT=$(azd env get-value AZURE_AI_SEARCH_SERVICE_ENDPOINT)
+  #         AZURE_AI_SEARCH_ADMIN_KEY=$(azd env get-value AZURE_AI_SEARCH_ADMIN_KEY)
+  #         AZURE_BLOB_CONTAINER_NAME=$(azd env get-value AZURE_BLOB_CONTAINER_NAME)
+  #         AZURE_STORAGE_ACCOUNT_NAME=$(azd env get-value AZURE_STORAGE_ACCOUNT_NAME)
+  #         AZURE_STORAGE_ACCOUNT_KEY=$(azd env get-value AZURE_STORAGE_ACCOUNT_KEY)
+  #         AZURE_AI_SERVICES_ENDPOINT=$(azd env get-value AZURE_AI_SERVICES_ENDPOINT)
+  #         AZURE_AI_SERVICES_KEY=$(azd env get-value AZURE_AI_SERVICES_KEY)
+  #         AZURE_STORAGE_CONNECTION_STRING=$(azd env get-value AZURE_STORAGE_CONNECTION_STRING)
+  #         AZURE_COSMOS_DB_DATABASE_NAME=$(azd env get-value AZURE_COSMOS_DB_DATABASE_NAME)
+  #         AZURE_COSMOS_DB_COLLECTION_NAME=$(azd env get-value AZURE_COSMOS_DB_COLLECTION_NAME)
+  #         AZURE_COSMOS_CONNECTION_STRING=$(azd env get-value AZURE_COSMOS_CONNECTION_STRING)
+  #         AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT=$(azd env get-value AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT)
+  #         AZURE_DOCUMENT_INTELLIGENCE_KEY=$(azd env get-value AZURE_DOCUMENT_INTELLIGENCE_KEY)
+  #         APPLICATIONINSIGHTS_CONNECTION_STRING=$(azd env get-value APPLICATIONINSIGHTS_CONNECTION_STRING)
+  #         EOF
+  #       )
+  #       if ! az containerapp job show -g $(azd env get-value RESOURCE_GROUP_NAME) --name 'search-index-initialization' > /dev/null 2>&1; then
+  #         az containerapp job create \
+  #             -g $(azd env get-value RESOURCE_GROUP_NAME) \
+  #             --environment $(azd env get-value AZURE_CONTAINER_ENVIRONMENT_ID) \
+  #             --name 'search-index-initialization' \
+  #             --image $(azd env get-value SERVICE_STREAMLIT_IMAGE_NAME) \
+  #             --command "/bin/bash, -c, python /app/src/pipeline/indexerSetup.py --target '/app'" \
+  #             --cpu 2.0 \
+  #             --memory 4Gi \
+  #             --trigger-type Manual \
+  #             --env-vars $env_vars \
+  #             --registry-identity $(azd env get-value APP_UAI_RESOURCE_ID) \
+  #             --registry-server $(azd env get-value AZURE_CONTAINER_REGISTRY_ENDPOINT)
+  #       az containerapp job start \
+  #           -g $(azd env get-value RESOURCE_GROUP_NAME) \
+  #           --name 'search-index-initialization' \
+  #           --image $(azd env get-value SERVICE_STREAMLIT_IMAGE_NAME) \
+  #           --command "/bin/bash, -c, python /app/src/pipeline/indexerSetup.py --target '/app'" \
+  #           --cpu 2.0 \
+  #           --memory 4Gi \
+  #           --registry-identity $(azd env get-value APP_UAI_RESOURCE_ID) 
+  #   windows:
+  #     shell: pwsh
+  #     interactive: true
+  #     continueOnError: false
+  #     run: |
+  #       azd env refresh
+  #       az acr login --name $(azd env get-value AZURE_CONTAINER_REGISTRY_ENDPOINT)
+  #       $env_vars = @"
+  #       AZURE_OPENAI_ENDPOINT=$(azd env get-value AZURE_OPENAI_ENDPOINT)
+  #       AZURE_OPENAI_API_VERSION=$(azd env get-value AZURE_OPENAI_API_VERSION)
+  #       AZURE_OPENAI_EMBEDDING_DEPLOYMENT=$(azd env get-value AZURE_OPENAI_EMBEDDING_DEPLOYMENT)
+  #       AZURE_OPENAI_CHAT_DEPLOYMENT_ID=$(azd env get-value AZURE_OPENAI_CHAT_DEPLOYMENT_ID)
+  #       AZURE_OPENAI_EMBEDDING_DIMENSIONS=$(azd env get-value AZURE_OPENAI_EMBEDDING_DIMENSIONS)
+  #       AZURE_SEARCH_SERVICE_NAME=$(azd env get-value AZURE_SEARCH_SERVICE_NAME)
+  #       AZURE_SEARCH_INDEX_NAME=$(azd env get-value AZURE_SEARCH_INDEX_NAME)
+  #       AZURE_AI_SEARCH_SERVICE_ENDPOINT=$(azd env get-value AZURE_AI_SEARCH_SERVICE_ENDPOINT)
+  #       AZURE_AI_SEARCH_ADMIN_KEY=$(azd env get-value AZURE_AI_SEARCH_ADMIN_KEY)
+  #       AZURE_BLOB_CONTAINER_NAME=$(azd env get-value AZURE_BLOB_CONTAINER_NAME)
+  #       AZURE_STORAGE_ACCOUNT_NAME=$(azd env get-value AZURE_STORAGE_ACCOUNT_NAME)
+  #       AZURE_STORAGE_ACCOUNT_KEY=$(azd env get-value AZURE_STORAGE_ACCOUNT_KEY)
+  #       AZURE_AI_SERVICES_ENDPOINT=$(azd env get-value AZURE_AI_SERVICES_ENDPOINT)
+  #       AZURE_AI_SERVICES_KEY=$(azd env get-value AZURE_AI_SERVICES_KEY)
+  #       AZURE_STORAGE_CONNECTION_STRING=$(azd env get-value AZURE_STORAGE_CONNECTION_STRING)
+  #       AZURE_COSMOS_DB_DATABASE_NAME=$(azd env get-value AZURE_COSMOS_DB_DATABASE_NAME)
+  #       AZURE_COSMOS_DB_COLLECTION_NAME=$(azd env get-value AZURE_COSMOS_DB_COLLECTION_NAME)
+  #       AZURE_COSMOS_CONNECTION_STRING=$(azd env get-value AZURE_COSMOS_CONNECTION_STRING)
+  #       AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT=$(azd env get-value AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT)
+  #       AZURE_DOCUMENT_INTELLIGENCE_KEY=$(azd env get-value AZURE_DOCUMENT_INTELLIGENCE_KEY)
+  #       APPLICATIONINSIGHTS_CONNECTION_STRING=$(azd env get-value APPLICATIONINSIGHTS_CONNECTION_STRING)
+  #       "@
+  #       az containerapp job create `
+  #           -g $(azd env get-value RESOURCE_GROUP_NAME) `
+  #           --environment $(azd env get-value AZURE_CONTAINER_ENVIRONMENT_ID) `
+  #           --name 'search-index-initialization' `
+  #           --image $(azd env get-value SERVICE_STREAMLIT_IMAGE_NAME) `
+  #           --command "python, src/pipeline/indexerSetup.py, --target, '/app'" `
+  #           --cpu 2.0 `
+  #           --memory 4Gi `
+  #           --trigger-type Manual `
+  #           --env-vars $env_vars `
+  #           --registry-identity $(azd env get-value APP_UAI_RESOURCE_ID) `
+  #           --registry-server $(azd env get-value AZURE_CONTAINER_REGISTRY_ENDPOINT)
+  postprovision:
+    posix:
+      shell: sh
+      interactive: true
+      continueOnError: false
+      run: |
+        // Construct the .env file for local development from the provisioned resource (bicep) outputs
+        echo "
+        AZURE_OPENAI_ENDPOINT=$(azd env get-value AZURE_OPENAI_ENDPOINT)
+        AZURE_OPENAI_API_VERSION=$(azd env get-value AZURE_OPENAI_API_VERSION)
+        AZURE_OPENAI_EMBEDDING_DEPLOYMENT=$(azd env get-value AZURE_OPENAI_EMBEDDING_DEPLOYMENT)
+        AZURE_OPENAI_CHAT_DEPLOYMENT_ID=$(azd env get-value AZURE_OPENAI_CHAT_DEPLOYMENT_ID)
+        AZURE_OPENAI_EMBEDDING_DIMENSIONS=$(azd env get-value AZURE_OPENAI_EMBEDDING_DIMENSIONS)
+        AZURE_SEARCH_SERVICE_NAME=$(azd env get-value AZURE_SEARCH_SERVICE_NAME)
+        AZURE_SEARCH_INDEX_NAME=$(azd env get-value AZURE_SEARCH_INDEX_NAME)
+        AZURE_AI_SEARCH_SERVICE_ENDPOINT=$(azd env get-value AZURE_AI_SEARCH_SERVICE_ENDPOINT)
+        AZURE_AI_SEARCH_ADMIN_KEY=$(azd env get-value AZURE_AI_SEARCH_ADMIN_KEY)
+        AZURE_BLOB_CONTAINER_NAME=$(azd env get-value AZURE_BLOB_CONTAINER_NAME)
+        AZURE_STORAGE_ACCOUNT_NAME=$(azd env get-value AZURE_STORAGE_ACCOUNT_NAME)
+        AZURE_STORAGE_ACCOUNT_KEY=$(azd env get-value AZURE_STORAGE_ACCOUNT_KEY)
+        AZURE_AI_SERVICES_ENDPOINT=$(azd env get-value AZURE_AI_SERVICES_ENDPOINT)
+        AZURE_AI_SERVICES_KEY=$(azd env get-value AZURE_AI_SERVICES_KEY)
+        AZURE_STORAGE_CONNECTION_STRING=$(azd env get-value AZURE_STORAGE_CONNECTION_STRING)
+        AZURE_COSMOS_DB_DATABASE_NAME=$(azd env get-value AZURE_COSMOS_DB_DATABASE_NAME)
+        AZURE_COSMOS_DB_COLLECTION_NAME=$(azd env get-value AZURE_COSMOS_DB_COLLECTION_NAME)
+        AZURE_COSMOS_CONNECTION_STRING=$(azd env get-value AZURE_COSMOS_CONNECTION_STRING)
+        AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT=$(azd env get-value AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT)
+        AZURE_DOCUMENT_INTELLIGENCE_KEY=$(azd env get-value AZURE_DOCUMENT_INTELLIGENCE_KEY)
+        APPLICATIONINSIGHTS_CONNECTION_STRING=$(azd env get-value APPLICATIONINSIGHTS_CONNECTION_STRING)
+        AZURE_CONTAINER_REGISTRY_ENDPOINT=$(azd env get-value AZURE_CONTAINER_REGISTRY_ENDPOINT)
+        " > .env
+
+    windows:
+      shell: pwsh
+      interactive: true
+      continueOnError: false
+      run: |
+        // Construct the .env file for local development from the provisioned resource (bicep) outputs
+        echo "
+        AZURE_OPENAI_ENDPOINT=$(azd env get-value AZURE_OPENAI_ENDPOINT)
+        AZURE_OPENAI_API_VERSION=$(azd env get-value AZURE_OPENAI_API_VERSION)
+        AZURE_OPENAI_EMBEDDING_DEPLOYMENT=$(azd env get-value AZURE_OPENAI_EMBEDDING_DEPLOYMENT)
+        AZURE_OPENAI_CHAT_DEPLOYMENT_ID=$(azd env get-value AZURE_OPENAI_CHAT_DEPLOYMENT_ID)
+        AZURE_OPENAI_EMBEDDING_DIMENSIONS=$(azd env get-value AZURE_OPENAI_EMBEDDING_DIMENSIONS)
+        AZURE_SEARCH_SERVICE_NAME=$(azd env get-value AZURE_SEARCH_SERVICE_NAME)
+        AZURE_SEARCH_INDEX_NAME=$(azd env get-value AZURE_SEARCH_INDEX_NAME)
+        AZURE_AI_SEARCH_SERVICE_ENDPOINT=$(azd env get-value AZURE_AI_SEARCH_SERVICE_ENDPOINT)
+        AZURE_AI_SEARCH_ADMIN_KEY=$(azd env get-value AZURE_AI_SEARCH_ADMIN_KEY)
+        AZURE_BLOB_CONTAINER_NAME=$(azd env get-value AZURE_BLOB_CONTAINER_NAME)
+        AZURE_STORAGE_ACCOUNT_NAME=$(azd env get-value AZURE_STORAGE_ACCOUNT_NAME)
+        AZURE_STORAGE_ACCOUNT_KEY=$(azd env get-value AZURE_STORAGE_ACCOUNT_KEY)
+        AZURE_AI_SERVICES_ENDPOINT=$(azd env get-value AZURE_AI_SERVICES_ENDPOINT)
+        AZURE_AI_SERVICES_KEY=$(azd env get-value AZURE_AI_SERVICES_KEY)
+        AZURE_STORAGE_CONNECTION_STRING=$(azd env get-value AZURE_STORAGE_CONNECTION_STRING)
+        AZURE_COSMOS_DB_DATABASE_NAME=$(azd env get-value AZURE_COSMOS_DB_DATABASE_NAME)
+        AZURE_COSMOS_DB_COLLECTION_NAME=$(azd env get-value AZURE_COSMOS_DB_COLLECTION_NAME)
+        AZURE_COSMOS_CONNECTION_STRING=$(azd env get-value AZURE_COSMOS_CONNECTION_STRING)
+        AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT=$(azd env get-value AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT)
+        AZURE_DOCUMENT_INTELLIGENCE_KEY=$(azd env get-value AZURE_DOCUMENT_INTELLIGENCE_KEY)
+        APPLICATIONINSIGHTS_CONNECTION_STRING=$(azd env get-value APPLICATIONINSIGHTS_CONNECTION_STRING)
+        AZURE_CONTAINER_REGISTRY_ENDPOINT=$(azd env get-value AZURE_CONTAINER_REGISTRY_ENDPOINT)
+        " > .env

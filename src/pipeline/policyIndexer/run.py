@@ -125,8 +125,14 @@ class PolicyIndexingPipeline:
         self.vector_search_config: Dict[str, Any] = config["vector_search"]
         self.skills_config: Dict[str, Any] = config["skills"]
 
-        self.blob_service_client: BlobServiceClient = (
-            BlobServiceClient.from_connection_string(self.blob_connection_string)
+        if "ResourceId" in self.blob_connection_string:
+            account_url = f"https://{os.getenv('AZURE_STORAGE_ACCOUNT_NAME')}.blob.core.windows.net"
+            self.blob_service_client: BlobServiceClient = BlobServiceClient(
+                account_url=account_url, credential=DefaultAzureCredential()
+            )
+        else:
+            self.blob_service_client: BlobServiceClient = BlobServiceClient.from_connection_string(
+            self.blob_connection_string
         )
         self.index_client: SearchIndexClient = SearchIndexClient(
             endpoint=self.endpoint, credential=self.credential
