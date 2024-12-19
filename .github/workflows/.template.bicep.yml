@@ -105,4 +105,3 @@ jobs:
       # deny-settings-apply-to-child-scopes: Deny settings are applied to child Azure management scopes.
       # deny-settings-excluded-actions: List of role-based access control (RBAC) management operations excluded from the deny settings. Up to 200 actions are allowed.
       # deny-settings-excluded-principals: List of Microsoft Entra principal IDs excluded from the lock. Up to five principals are allowed.
-
