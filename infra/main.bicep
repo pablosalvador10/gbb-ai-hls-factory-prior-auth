@@ -81,7 +81,6 @@ module resources 'priorAuthInfra.bicep' = {
   name: 'resources'
   params: {
     // Required Parameters
-    location: location
     tags: tags
     cosmosAdministratorPassword: cosmosAdministratorPassword
 

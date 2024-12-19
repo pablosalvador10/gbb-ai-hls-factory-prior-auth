@@ -27,9 +27,6 @@ param streamlitExists bool = false
 @secure()
 param cosmosAdministratorPassword string
 
-@description('The location into which the resources should be deployed.')
-param location string = resourceGroup().location
-
 @description('API Version of the OpenAI API')
 param openAiApiVersion string = '2024-08-01-preview'
 
@@ -60,9 +57,10 @@ param storageBlobContainerName string = 'default'
 var name = toLower('${priorAuthName}')
 var uniqueSuffix = substring(uniqueString(resourceGroup().id), 0, 7)
 var storageServiceName = toLower(replace('storage-${name}-${uniqueSuffix}', '-', ''))
+var location = resourceGroup().location
 
 // @TODO: Replace with AVM module
-module docIntelligence 'modules/docintelligence.bicep' = {
+module docIntelligence 'modules/ai/docintelligence.bicep' = {
   name: 'doc-intelligence-${name}-${uniqueSuffix}-deployment'
   params: {
     aiServiceName: 'doc-intelligence-${name}-${uniqueSuffix}'
@@ -73,7 +71,7 @@ module docIntelligence 'modules/docintelligence.bicep' = {
 }
 
 // @TODO: Replace with AVM module
-module multiAccountAiServices 'modules/cs-mais.bicep' = {
+module multiAccountAiServices 'modules/ai/mais.bicep' = {
   name: 'multiservice-${name}-${uniqueSuffix}-deployment'
   params: {
     aiServiceName: 'multiservice-${name}-${uniqueSuffix}'
@@ -84,7 +82,7 @@ module multiAccountAiServices 'modules/cs-mais.bicep' = {
 }
 
 // @TODO: Replace with AVM module
-module openAiService 'modules/cs-openai.bicep' = {
+module openAiService 'modules/ai/openai.bicep' = {
   name: 'openai-${name}-${uniqueSuffix}-deployment'
   params: {
     aiServiceName: 'openai-${name}-${uniqueSuffix}'
@@ -97,7 +95,7 @@ module openAiService 'modules/cs-openai.bicep' = {
 }
 
 // @TODO: Replace with AVM module
-module searchService 'modules/search.bicep' = {
+module searchService 'modules/data/search.bicep' = {
   name: 'search-${name}-${uniqueSuffix}-deployment'
   params: {
     aiServiceName: 'search-${name}-${uniqueSuffix}'
@@ -108,7 +106,7 @@ module searchService 'modules/search.bicep' = {
 }
 
 // @TODO: Replace with AVM module
-module storageAccount 'modules/storage.bicep' = {
+module storageAccount 'modules/data/storage.bicep' = {
   name: 'storage-${name}-${uniqueSuffix}-deployment'
   params: {
     aiServiceName: storageServiceName
@@ -119,7 +117,7 @@ module storageAccount 'modules/storage.bicep' = {
 }
 
 // @TODO: Replace with AVM module
-module appInsights 'modules/appinsights.bicep' = {
+module appInsights 'modules/monitoring/appinsights.bicep' = {
   name: 'appinsights-${name}-${uniqueSuffix}-deployment'
   params: {
     aiServiceName: 'appinsights-${name}-${uniqueSuffix}'
@@ -129,7 +127,7 @@ module appInsights 'modules/appinsights.bicep' = {
 }
 
 // @TODO: Replace with AVM module
-module cosmosDb 'modules/cosmos-mongo.bicep' = {
+module cosmosDb 'modules/data/cosmos-mongo.bicep' = {
   name: 'cosmosdb-${name}-${uniqueSuffix}-deployment'
   params: {
     aiServiceName: 'cosmosdb-${name}-${uniqueSuffix}'
@@ -139,7 +137,7 @@ module cosmosDb 'modules/cosmos-mongo.bicep' = {
   }
 }
 
-module logAnalytics 'modules/loganalytics.bicep' = {
+module logAnalytics 'modules/monitoring/loganalytics.bicep' = {
   name: 'loganalytics-${name}-${uniqueSuffix}-deployment'
   params: {
     logAnalyticsName: 'loganalytics-${name}-${uniqueSuffix}'
@@ -271,7 +269,7 @@ module containerApp 'modules/containerapp.bicep' = {
       }
       {
         name: 'AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT'
-        value: docIntelligence.outputs.aiServicesEndpoint
+        value: docIntelligence.outputs.aiServiceDocIntelligenceEndpoint
       }
       {
         name: 'AZURE_DOCUMENT_INTELLIGENCE_KEY'
