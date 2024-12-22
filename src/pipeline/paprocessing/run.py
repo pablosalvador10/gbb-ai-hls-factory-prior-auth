@@ -2,8 +2,8 @@
 import json
 import os
 import shutil
-import time
 import tempfile
+import time
 from typing import Any, Dict, List, Optional, Union
 
 import dotenv
@@ -11,14 +11,18 @@ import streamlit as st
 import yaml
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
-
-from colorama import Fore, init
+from colorama import init
 from opentelemetry import trace
 
 from src.aoai.aoai_helper import AzureOpenAIManager
 from src.cosmosdb.cosmosmongodb_helper import CosmosDBMongoCoreManager
-from src.documentintelligence.document_intelligence_helper import AzureDocumentIntelligenceManager
+from src.documentintelligence.document_intelligence_helper import (
+    AzureDocumentIntelligenceManager,
+)
 from src.entraid.generate_id import generate_unique_id
+from src.pipeline.agenticRag.run import AgenticRAG
+from src.pipeline.autoDetermination.run import AutoPADeterminator
+from src.pipeline.clinicalExtractor.run import ClinicalDataExtractor
 from src.pipeline.paprocessing.helpers import find_all_files
 from src.pipeline.paprocessing.models import (
     ClinicalInformation,
@@ -30,12 +34,9 @@ from src.pipeline.prompt_manager import PromptManager
 from src.storage.blob_helper import AzureBlobManager
 from utils.ml_logging import get_logger
 
-from src.pipeline.clinicalExtractor.run import ClinicalDataExtractor
-from src.pipeline.agenticRag.run import AgenticRAG
-from src.pipeline.autoDetermination.run import AutoPADeterminator
-
 init(autoreset=True)
 dotenv.load_dotenv(".env")
+
 
 class PAProcessingPipeline:
     """
@@ -147,7 +148,7 @@ class PAProcessingPipeline:
             collection_name=azure_cosmos_db_collection_name,
         )
         self.prompt_manager = PromptManager()
-        
+
         # Prompts loaded exactly as originally implemented, no logic changes
         self.PATIENT_PROMPT_NER_SYSTEM = self.prompt_manager.get_prompt(
             "ner_patient_system.jinja"
@@ -202,7 +203,7 @@ class PAProcessingPipeline:
             PATIENT_PROMPT_NER_USER=self.PATIENT_PROMPT_NER_USER,
             PHYSICIAN_PROMPT_NER_USER=self.PHYSICIAN_PROMPT_NER_USER,
             CLINICIAN_PROMPT_NER_USER=self.CLINICIAN_PROMPT_NER_USER,
-            local=self.local
+            local=self.local,
         )
 
         self.agentic_rag = AgenticRAG(
@@ -218,7 +219,7 @@ class PAProcessingPipeline:
             presence_penalty=self.presence_penalty,
             SYSTEM_PROMPT_QUERY_EXPANSION=self.SYSTEM_PROMPT_QUERY_EXPANSION,
             SYSTEM_PROMPT_SUMMARIZE_POLICY=self.SYSTEM_PROMPT_SUMMARIZE_POLICY,
-            local=self.local
+            local=self.local,
         )
 
         self.auto_pa_determinator = AutoPADeterminator(
@@ -231,7 +232,7 @@ class PAProcessingPipeline:
             frequency_penalty=self.frequency_penalty,
             presence_penalty=self.presence_penalty,
             SYSTEM_PROMPT_PRIOR_AUTH=self.SYSTEM_PROMPT_PRIOR_AUTH,
-            local=self.local
+            local=self.local,
         )
 
     def upload_files_to_blob(
@@ -288,7 +289,9 @@ class PAProcessingPipeline:
             f"All files processed for upload to Azure Blob Storage in container '{self.blob_manager.container_name}'."
         )
 
-    def process_uploaded_files(self, uploaded_files: Union[str, List[str]]) -> Union[str, List[str]]:
+    def process_uploaded_files(
+        self, uploaded_files: Union[str, List[str]]
+    ) -> Union[str, List[str]]:
         """
         Process uploaded files and extract images.
 
@@ -477,7 +480,7 @@ class PAProcessingPipeline:
                     image_files,
                     PatientInformation,
                     PhysicianInformation,
-                    ClinicalInformation
+                    ClinicalInformation,
                 )
 
                 clinical_info = api_response_ner.get("clinician_data")
@@ -511,7 +514,9 @@ class PAProcessingPipeline:
                     progress += 1
                     progress_bar.progress(progress / total_steps)
 
-                api_response_query = await self.agentic_rag.expand_query_and_search_policy(clinical_info)
+                api_response_query = (
+                    await self.agentic_rag.expand_query_and_search_policy(clinical_info)
+                )
                 if api_response_query is None:
                     raise ValueError("Query expansion and search returned None")
 
@@ -530,7 +535,9 @@ class PAProcessingPipeline:
                         progress_bar.empty()
                     return
 
-                policy_text = self.agentic_rag.get_policy_text_from_blob(policy_location)
+                policy_text = self.agentic_rag.get_policy_text_from_blob(
+                    policy_location
+                )
                 if policy_text is None:
                     raise ValueError("Policy text extraction returned None")
 
@@ -544,7 +551,9 @@ class PAProcessingPipeline:
 
                 async def summarize_policy_callback(text: str) -> str:
                     summary = await self.agentic_rag.summarize_policy(text)
-                    self.log_output({"summary_policy": summary}, [], step="summarize_policy")
+                    self.log_output(
+                        {"summary_policy": summary}, [], step="summarize_policy"
+                    )
                     return summary
 
                 if streamlit:
@@ -552,14 +561,17 @@ class PAProcessingPipeline:
                     progress += 1
                     progress_bar.progress(progress / total_steps)
 
-                final_determination, final_conv_history = await self.auto_pa_determinator.generate_final_determination(
+                (
+                    final_determination,
+                    final_conv_history,
+                ) = await self.auto_pa_determinator.generate_final_determination(
                     caseId=self.caseId,
                     patient_info=patient_info,
                     physician_info=physician_info,
                     clinical_info=clinical_info,
                     policy_text=policy_text,
                     summarize_policy_callback=summarize_policy_callback,
-                    use_o1=use_o1
+                    use_o1=use_o1,
                 )
 
                 self.log_output(
@@ -571,7 +583,9 @@ class PAProcessingPipeline:
                 if streamlit:
                     end_time = time.time()  # End timing
                     execution_time = end_time - start_time
-                    status_text.success(f"✅ **PA {self.caseId} Processing completed in {execution_time:.2f} seconds!**")
+                    status_text.success(
+                        f"✅ **PA {self.caseId} Processing completed in {execution_time:.2f} seconds!**"
+                    )
                     progress_bar.progress(1.0)
 
             except Exception as e:
@@ -588,5 +602,9 @@ class PAProcessingPipeline:
                 execution_time = end_time - start_time
                 self.logger.info(
                     f"PAprocessing completed for {self.caseId}. Execution time: {execution_time:.2f} seconds.",
-                    extra={"custom_dimensions": json.dumps({"caseId": self.caseId, "execution_time": execution_time})},
+                    extra={
+                        "custom_dimensions": json.dumps(
+                            {"caseId": self.caseId, "execution_time": execution_time}
+                        )
+                    },
                 )

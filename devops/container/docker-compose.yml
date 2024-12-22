@@ -1,7 +1,7 @@
 name: 'priorauth'
 services:
   streamlit:
-    build: 
+    build:
       context: ../../
       dockerfile: devops/container/Dockerfile
       platforms:
@@ -9,5 +9,4 @@ services:
     ports:
       - "8081:8501"
     env_file:
-      - ../../.env  
-      
+      - ../../.env

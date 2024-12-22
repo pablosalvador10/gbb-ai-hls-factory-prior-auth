@@ -9,6 +9,8 @@ param environmentName string
 @description('Primary location for all resources')
 param location string
 
+@description('Flag to indicate if Streamlit app image exists. This is managed by AZD')
+param streamlitExists bool = false
 
 @description('Admin password for the cluster')
 @secure()
@@ -85,6 +87,7 @@ module resources 'priorAuthInfra.bicep' = {
     cosmosAdministratorPassword: cosmosAdministratorPassword
 
     // Optional Parameters
+    streamlitExists: streamlitExists
     priorAuthName: priorAuthName
     acrContainerImage: acrContainerImage
     acrUsername: acrUsername
@@ -97,9 +100,10 @@ module resources 'priorAuthInfra.bicep' = {
   }
 }
 
+// Setting the outputs at main.bicep sets the environment variables within azd
 output RESOURCE_GROUP_NAME string = rg.name
-output APP_UAI_PRINCIPAL_ID string = resources.outputs.appIdentityPrincipalId
-output APP_UAI_RESOURCE_ID string = resources.outputs.appIdentityResourceId
+output APP_IDENTITY_CLIENT_ID string = resources.outputs.appIdentityClientId
+output APP_IDENTITY_RESOURCE_ID string = resources.outputs.appIdentityResourceId
 output REGISTRY_NAME string = resources.outputs.registryName
 
 output AZURE_OPENAI_ENDPOINT string = resources.outputs.AZURE_OPENAI_ENDPOINT
@@ -110,7 +114,6 @@ output AZURE_OPENAI_CHAT_DEPLOYMENT_01 string = resources.outputs.AZURE_OPENAI_C
 output AZURE_OPENAI_EMBEDDING_DIMENSIONS string = resources.outputs.AZURE_OPENAI_EMBEDDING_DIMENSIONS
 output AZURE_SEARCH_SERVICE_NAME string = resources.outputs.AZURE_SEARCH_SERVICE_NAME
 output AZURE_SEARCH_INDEX_NAME string = resources.outputs.AZURE_SEARCH_INDEX_NAME
-output AZURE_AI_SERVICES_ENDPOINT string = resources.outputs.AZURE_AI_SEARCH_SERVICE_ENDPOINT
 output AZURE_AI_SEARCH_ADMIN_KEY string = resources.outputs.AZURE_AI_SEARCH_ADMIN_KEY
 output AZURE_BLOB_CONTAINER_NAME string = resources.outputs.AZURE_BLOB_CONTAINER_NAME
 output AZURE_STORAGE_ACCOUNT_NAME string = resources.outputs.AZURE_STORAGE_ACCOUNT_NAME
@@ -125,3 +128,4 @@ output AZURE_DOCUMENT_INTELLIGENCE_KEY string = resources.outputs.AZURE_DOCUMENT
 output APPLICATIONINSIGHTS_CONNECTION_STRING string = resources.outputs.APPLICATIONINSIGHTS_CONNECTION_STRING
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = resources.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT
 output AZURE_CONTAINER_ENVIRONMENT_ID string = resources.outputs.AZURE_CONTAINER_ENVIRONMENT_ID
+output AZURE_OPENAI_KEY string = resources.outputs.AZURE_OPENAI_KEY

@@ -1,5 +1,4 @@
 import os
-from functools import lru_cache
 from typing import Any, Dict, Iterator, List, Optional, Union
 
 from azure.ai.documentintelligence import DocumentIntelligenceClient, models

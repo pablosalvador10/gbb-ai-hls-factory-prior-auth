@@ -36,6 +36,9 @@ param ingressPort int = 8501
 @description('Optional user-assigned identity for the Container App')
 param userAssignedIdentityId string = ''
 
+@description('Optional service name for tagging resources')
+param azdServiceName string = 'streamlit'
+
 @description('SKU name for the Managed Environment. Allowed values: Consumption')
 @allowed([
   'Consumption'
@@ -49,11 +52,22 @@ var environmentNameCleaned = toLower(environmentName)
 // var acrName = split(acrContainerImage, '/')[0]
 var containerAppJobContributorRoleId = 'b9a307c4-5aa3-4b52-ba60-2b17c136cd7b'
 
+var userAssignedIdentity = userAssignedIdentityId != '' ? {
+  principalId: reference(userAssignedIdentityId, '2018-11-30').principalId
+  clientId: reference(userAssignedIdentityId, '2018-11-30').clientId
+} : {}
+
+// If the acrContainerImage is provided, allow for override.
+var containerImage = acrContainerImage != ''
+  // Otherwise, let azd handle the provisioning and deploy.
+  ? acrContainerImage
+  : (streamlitExists ? containerFetchLatestImage.outputs.containers[0].image : 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest')
+
 // Append to containerEnvArray the AZURE_CLIENT_ID of the user-assigned-identity
 var containerEnvArrayWithIdentity = union(containerEnvArray, [
   {
     name: 'AZURE_CLIENT_ID'
-    value: appIdentity.outputs.principalId
+    value: userAssignedIdentityId != {} ? userAssignedIdentity.clientId : ''
   }
 ])
 
@@ -61,13 +75,13 @@ module containerFetchLatestImage './fetch-container-image.bicep' = {
   name: 'frontend-fetch-image'
   params: {
     exists: streamlitExists
-    name: acrContainerImage
+    name: containerAppNameCleaned
   }
 }
 
 var frontendContainer = {
   name: '${containerAppNameCleaned}-fe'
-  image: containerFetchLatestImage.outputs.?containers[?0].?image ?? 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
+  image: containerImage
   command: []
   args: []
   resources: {
@@ -77,18 +91,18 @@ var frontendContainer = {
   env: containerEnvArrayWithIdentity
 }
 
-// var jobAppContainers = {
-//   name: '${containerAppNameCleaned}-job'
-//   image: containerFetchLatestImage.outputs.?containers[?0].?image ?? 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
-//   // command: ['/bin/bash', '-c', 'python /src/pipeline/indexerSetup.py --target \'/app\'']
-//   command: ['/bin/bash', '-c', 'exit']
-//   args: []
-//   resources: {
-//     cpu: json('2.0')
-//     memory: '4Gi'
-//   }
-//   env: containerEnvArray
-// }
+var jobAppContainers = {
+  name: '${containerAppNameCleaned}-job'
+  image: containerImage
+  // command: ['/bin/bash', '-c', 'python /src/pipeline/indexerSetup.py --target \'/app\'']
+  command: ['/bin/bash']
+  args: ['-c', 'python /src/pipeline/indexerSetup.py --target \'/app\'']
+  resources: {
+    cpu: json('2.0')
+    memory: '4Gi'
+  }
+  env: containerEnvArray
+}
 
 var registries = acrUsername != '' && acrPassword != '' ? [{
   username: acrUsername
@@ -143,80 +157,52 @@ resource managedEnvironment 'Microsoft.App/managedEnvironments@2024-02-02-previe
   }
 }
 
-// resource containerAppJob 'Microsoft.App/jobs@2024-02-02-preview' = {
-//   name: '${containerAppNameCleaned}-job'
-//   location: location
-//   tags: union(tags, { 'azd-service-name': 'streamlit' })
-//   properties: {
-//     environmentId: managedEnvironment.id
-//     configuration: {
-//       secrets: secrets
-//       registries: registries
-//       replicaTimeout: 7200
-//       replicaRetryLimit: 3
-//       triggerType: 'Manual'
-//       manualTriggerConfig: {
-//         replicaCompletionCount: 1
-//         parallelism: 1
-//       }
-//     }
-//     template: {
-//       containers: [jobAppContainers]
-//     }
-//     workloadProfileName: workloadProfileName
-//   }
-// }
 
-// resource containerAppJobContributorRoleDef 'Microsoft.Authorization/roleDefinitions@2022-05-01-preview' existing = {
-//   scope: resourceGroup()
-//   name: containerAppJobContributorRoleId
-// }
+resource containerAppJob 'Microsoft.App/jobs@2024-02-02-preview' = {
+  name: '${containerAppNameCleaned}-job'
+  location: location
+  identity: userAssignedIdentityId != '' ? {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userAssignedIdentityId}': {}
+    }
+  } : {
+    type: 'SystemAssigned'
+  }
+  tags: union(tags, { 'azd-service-name': 'jobcontainer' })
+  properties: {
+    environmentId: managedEnvironment.id
+    configuration: {
+      secrets: secrets
+      registries: registries
+      replicaTimeout: 1000
+      replicaRetryLimit: 3
+      triggerType: 'Manual'
+      manualTriggerConfig: {
+        replicaCompletionCount: 1
+        parallelism: 1
+      }
+      identitySettings: [
+        {
+          identity: userAssignedIdentityId != '' ? userAssignedIdentityId : 'system'
+          lifecycle: 'All'
+        }
+      ]
+    }
+    template: {
+      containers: [jobAppContainers]
+    }
+    workloadProfileName: workloadProfileName
+  }
+}
 
-// resource scriptIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
-//   name: 'script-identity'
-//   location: location
-// }
-
-// resource jobContributorRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-//   scope: containerAppJob
-//   name: guid(containerAppJobContributorRoleDef.id, scriptIdentity.id, containerAppJob.id)
-//   properties: {
-//     principalType: 'ServicePrincipal'
-//     principalId: scriptIdentity.properties.principalId
-//     roleDefinitionId: containerAppJobContributorRoleDef.id
-//   }
-// }
-
-// resource triggerJobScript 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
-//   name: '${containerAppNameCleaned}-trigger'
-//   location: location
-//   kind: 'AzureCLI'
-//   identity: {
-//     type: 'UserAssigned'
-//     userAssignedIdentities: {
-//       '${scriptIdentity.id}': {}
-//     }
-//   }
-//   properties: {
-//     azCliVersion: '2.59.0'
-//     arguments: '${containerAppJob.name} ${resourceGroup().name}'
-//     retentionInterval: 'PT1H'
-//     scriptContent: '''
-//       #!/bin/bash
-//       set -e
-//       az containerapp job start -n $1 -g $2
-//     '''
-//   }
-//   dependsOn: [
-//     containerAppJob
-//   ]
-// }
-
-module appIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.2.1' = {
-  name: '${containerAppNameCleaned}-uaidentity'
-  params: {
-    name: '${containerAppNameCleaned}-uaidentity'
-    location: location
+resource containerAppJobOperator 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  scope: resourceGroup()
+  name: guid(containerAppJob.name, containerAppResource.name, 'Container App Jobs Operator')
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', containerAppJobContributorRoleId) // Storage Blob Data Contributor
+    principalId: userAssignedIdentityId != '' ? userAssignedIdentity.principalId : containerAppResource.identity.principalId
+    principalType: 'ServicePrincipal'
   }
 }
 
@@ -225,7 +211,7 @@ resource containerAppResource 'Microsoft.App/containerapps@2024-02-02-preview' =
   name: containerAppNameCleaned
   kind: 'containerapps'
   location: location
-  tags: union(tags, { 'azd-service-name': 'streamlit' })
+  tags: union(tags, { 'azd-service-name': azdServiceName })
   identity: userAssignedIdentityId != '' ? {
     type: 'UserAssigned'
     userAssignedIdentities: {
@@ -253,9 +239,14 @@ resource containerAppResource 'Microsoft.App/containerapps@2024-02-02-preview' =
 }
 
 // Outputs
+output containerAppJobName string = containerAppJob.name
+output containerAppClientId string = userAssignedIdentityId != '' ? userAssignedIdentity.clientId : containerAppResource.identity.principalId
+output containerAppIdentityResourceId string = userAssignedIdentityId != '' ? userAssignedIdentityId : containerAppResource.identity.tenantId
 output containerAppIdentityPrincipalId string = userAssignedIdentityId != '' ? userAssignedIdentityId : containerAppResource.identity.principalId
 output containerAppEndpoint string = containerAppResource.properties.configuration.ingress.fqdn
+
 output containerAppId string = containerAppResource.id
 output containerAppName string = containerAppResource.name
 output managedEnvironmentId string = managedEnvironment.id
 output managedEnvironmentName string = managedEnvironment.name
+output containerEnvironmentVariables array = containerEnvArrayWithIdentity

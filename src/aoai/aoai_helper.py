@@ -9,7 +9,7 @@ import os
 import time
 import traceback
 from io import BytesIO
-from typing import Any, Dict, List, Literal, Optional, Tuple, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
@@ -19,7 +19,6 @@ from dotenv import load_dotenv
 from openai import AzureOpenAI
 
 from src.aoai.tokenizer import AzureOpenAITokenizer
-from src.aoai.utils import extract_rate_limit_and_usage_info
 from utils.ml_logging import get_logger
 
 # Load environment variables from .env file
@@ -28,7 +27,6 @@ load_dotenv()
 # Set up logger
 logger = get_logger()
 
-from src.aoai.test import TEST_STRING
 
 class AzureOpenAIManager:
     """
@@ -240,7 +238,7 @@ class AzureOpenAIManager:
             logger.error(f"Error details: {e}")
             logger.error(f"Traceback: {traceback.format_exc()}")
             return None, None
-        
+
     async def generate_chat_response_o1(
         self,
         query: str,
@@ -318,8 +316,10 @@ class AzureOpenAIManager:
             return None
         except Exception as e:
             error_message = str(e)
-            if 'maximum context length' in error_message:
-                logger.warning("Context length exceeded, reducing conversation history and retrying.")
+            if "maximum context length" in error_message:
+                logger.warning(
+                    "Context length exceeded, reducing conversation history and retrying."
+                )
                 logger.warning(f"Error details: {e}")
                 return "maximum context length"
             logger.error(
@@ -508,8 +508,10 @@ class AzureOpenAIManager:
             return None
         except Exception as e:
             error_message = str(e)
-            if 'maximum context length' in error_message:
-                logger.warning("Context length exceeded, reducing conversation history and retrying.")
+            if "maximum context length" in error_message:
+                logger.warning(
+                    "Context length exceeded, reducing conversation history and retrying."
+                )
                 logger.warning(f"Error details: {e}")
                 return "maximum context length"
             logger.error(

@@ -9,7 +9,7 @@ param tags object = {}
 
 @description('ACR container image url')
 @secure()
-param acrContainerImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
+param acrContainerImage string = ''
 
 @description('Admin user for the ACR registry of the container image')
 @secure()
@@ -116,6 +116,8 @@ module storageAccount 'modules/data/storage.bicep' = {
   }
 }
 
+
+
 // @TODO: Replace with AVM module
 module appInsights 'modules/monitoring/appinsights.bicep' = {
   name: 'appinsights-${name}-${uniqueSuffix}-deployment'
@@ -151,6 +153,15 @@ module appIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.
   params: {
     name: 'uai-app-${name}-${uniqueSuffix}'
     location: location
+  }
+}
+resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  scope: resourceGroup()
+  name: guid(storageAccount.name, appIdentity.name, 'Storage Blob Data Contributor')
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe') // Storage Blob Data Contributor
+    principalId: appIdentity.outputs.principalId
+    principalType: 'ServicePrincipal'
   }
 }
 
@@ -249,7 +260,7 @@ module containerApp 'modules/containerapp.bicep' = {
       }
       {
         name: 'AZURE_STORAGE_CONNECTION_STRING'
-        value: storageAccount.outputs.storageAccountPrimaryConnectionString
+        value: 'ResourceId=${storageAccount.outputs.storageAccountId}' // Use the ResourceID to enable Azure Search to use Managed Identity to create Data Source
       }
       {
         name: 'AZURE_AI_SERVICES_KEY'
@@ -285,6 +296,8 @@ module containerApp 'modules/containerapp.bicep' = {
     workloadProfileName: 'Consumption'
   }
 }
+
+
 output AZURE_OPENAI_ENDPOINT string = openAiService.outputs.aiServicesEndpoint
 output AZURE_OPENAI_API_VERSION string = openAiApiVersion
 output AZURE_OPENAI_EMBEDDING_DEPLOYMENT string = embeddingModel.name
@@ -298,7 +311,8 @@ output AZURE_AI_SEARCH_SERVICE_ENDPOINT string = searchService.outputs.searchSer
 output AZURE_STORAGE_ACCOUNT_KEY string = storageAccount.outputs.storageAccountPrimaryKey
 output AZURE_BLOB_CONTAINER_NAME string = storageBlobContainerName
 output AZURE_STORAGE_ACCOUNT_NAME string = storageAccount.outputs.storageAccountName
-output AZURE_STORAGE_CONNECTION_STRING string = storageAccount.outputs.storageAccountPrimaryConnectionString
+// output AZURE_STORAGE_CONNECTION_STRING string = storageAccount.outputs.storageAccountPrimaryConnectionString
+output AZURE_STORAGE_CONNECTION_STRING string = 'ResourceId=${storageAccount.outputs.storageAccountId}' // Use the ResourceID to enable Azure Search to use Managed Identity to create Data Source
 output AZURE_AI_SERVICES_KEY string = multiAccountAiServices.outputs.aiServicesPrimaryKey
 output AZURE_COSMOS_DB_DATABASE_NAME string = 'priorauthsessions'
 output AZURE_COSMOS_DB_COLLECTION_NAME string = 'temp'
@@ -309,7 +323,9 @@ output APPLICATIONINSIGHTS_CONNECTION_STRING string = appInsights.outputs.appIns
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = registry.outputs.loginServer
 output AZURE_CONTAINER_ENVIRONMENT_ID string = containerApp.outputs.managedEnvironmentId
 output AZURE_CONTAINER_ENVIRONMENT_NAME string = containerApp.outputs.managedEnvironmentName
+output AZURE_OPENAI_KEY string = openAiService.outputs.aiServicesKey
 
+output appIdentityClientId string = appIdentity.outputs.clientId
 output appIdentityPrincipalId string = appIdentity.outputs.principalId
 output appIdentityResourceId string = appIdentity.outputs.resourceId
 output registryName string = registry.outputs.name

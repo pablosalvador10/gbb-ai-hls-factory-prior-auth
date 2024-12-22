@@ -1,54 +1,57 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "environmentName": {
-        "value": "${AZURE_ENV_NAME:-defaultEnv}"
-      },
-      "location": {
-        "value": "${AZURE_LOCATION:-eastus}"
-      },
-      "cosmosAdministratorPassword": {
-        "value": "${cosmosAdministratorPassword}"
-      },
-      "priorAuthName": {
-        "value": "${PRIOR_AUTH_NAME:-priorAuth}"
-      },
-      "acrContainerImage": {
-        "value": "${ACR_CONTAINER_IMAGE:-}"
-      },
-      "acrUsername": {
-        "value": "${ACR_USERNAME:-}"
-      },
-      "acrPassword": {
-        "value": "${ACR_PASSWORD:-}"
-      },
-      "openAiApiVersion": {
-        "value": "${OPENAI_API_VERSION:-2024-08-01-preview}"
-      },
-      "chatCompletionModels": {
-        "value": [
-          {
-            "name": "gpt-4o",
-            "version": "2024-08-06",
-            "skuName": "GlobalStandard",
-            "capacity": 25
-          }
-        ]
-      },
-      "embeddingModel": {
-        "value": {
-          "name": "text-embedding-3-large",
-          "version": "1",
-          "skuName": "Standard",
-          "capacity": 16
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": {
+      "value": "${AZURE_ENV_NAME:-defaultEnv}"
+    },
+    "location": {
+      "value": "${AZURE_LOCATION:-eastus}"
+    },
+    "cosmosAdministratorPassword": {
+      "value": "${cosmosAdministratorPassword}"
+    },
+    "priorAuthName": {
+      "value": "${PRIOR_AUTH_NAME:-priorAuth}"
+    },
+    "streamlitExists": {
+      "value": "${SERVICE_STREAMLIT_RESOURCE_EXISTS:-false}"
+    },
+    "acrContainerImage": {
+      "value": "${ACR_CONTAINER_IMAGE:-}"
+    },
+    "acrUsername": {
+      "value": "${ACR_USERNAME:-}"
+    },
+    "acrPassword": {
+      "value": "${ACR_PASSWORD:-}"
+    },
+    "openAiApiVersion": {
+      "value": "${OPENAI_API_VERSION:-2024-08-01-preview}"
+    },
+    "chatCompletionModels": {
+      "value": [
+        {
+          "name": "gpt-4o",
+          "version": "2024-08-06",
+          "skuName": "GlobalStandard",
+          "capacity": 25
         }
-      },
-      "embeddingModelDimension": {
-        "value": "${EMBEDDING_MODEL_DIMENSION:-3072}"
-      },
-      "storageBlobContainerName": {
-        "value": "${STORAGE_BLOB_CONTAINER_NAME:-default}"
+      ]
+    },
+    "embeddingModel": {
+      "value": {
+        "name": "text-embedding-3-large",
+        "version": "1",
+        "skuName": "Standard",
+        "capacity": 16
       }
+    },
+    "embeddingModelDimension": {
+      "value": "${EMBEDDING_MODEL_DIMENSION:-3072}"
+    },
+    "storageBlobContainerName": {
+      "value": "${STORAGE_BLOB_CONTAINER_NAME:-default}"
     }
+  }
 }

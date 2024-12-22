@@ -36,22 +36,22 @@ This repository aims to **streamline and automate** the PA process using Azure A
 
 ## 🎉 Why This Repository?
 
-1. **Faster Decisions & Cost Efficiency**:  
+1. **Faster Decisions & Cost Efficiency**:
    Transform days-long PA turnarounds into hours, drastically reducing administrative overhead and associated costs.
 
-2. **Improved Patient Outcomes**:  
+2. **Improved Patient Outcomes**:
    Accelerate treatment approvals, minimize delays in critical care, and enhance overall patient satisfaction.
 
-3. **Automated Infrastructure**:  
+3. **Automated Infrastructure**:
    Utilize pre-built Azure Bicep templates and one-click deployment to set up the necessary infrastructure—Azure OpenAI, Storage, Cognitive Services—without manual, time-consuming configurations.
 
-4. **LLMOps & Evaluation with AI Studio**:  
+4. **LLMOps & Evaluation with AI Studio**:
    Leverage Azure AI Studio for continuous model performance evaluation and prompt optimization. Implement robust LLMOps practices, ensuring consistent improvements in accuracy and reliability over time.
 
-5. **Agentic Interactions via Semantic Kernel**:  
+5. **Agentic Interactions via Semantic Kernel**:
    Integrate Semantic Kernel to enable agentic interactions with the LLM, coordinating policy retrieval, data extraction, and decision-making steps efficiently and autonomously.
 
-6. **Research-Proven Prompts & Fine-Tuning**:  
+6. **Research-Proven Prompts & Fine-Tuning**:
    Benefit from research-backed prompt engineering strategies that improve precision and reduce hallucinations in model outputs, ensuring that the system’s recommendations align closely with clinical and policy requirements.
 
 ## 🚀 Quick Start: One-Click Deploy
@@ -62,15 +62,15 @@ Ready to dive in? With just one click, you can deploy the core infrastructure an
 [![Visualize](utils/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fpablosalvador10%2Fgbb-ai-hls-factory-prior-auth%2Fdevops%2Finfra%2Fmain.json)
 
 > [!TIP]
-> *Want to customize or learn more about configuration?*  
+> *Want to customize or learn more about configuration?*
 > **[Read the detailed instructions on our GitHub Pages ➜](https://pablosalvador10.github.io/gbb-ai-hls-factory-prior-auth)**
 
 ## ✅ What's Next?
 
 ### Near-Term Goals
 - [ ] **Public Image Availability**: Host container images publicly (e.g., on Azure Container Registry) for easier and more flexible deployments, built by this repo and CI/CD.
-- [ ] **Multi-Language & Region Support**: Adapt LLM models and policies for multiple languages and healthcare regulatory environments.  
-- [ ] **API Management (APIM) Integration**: Introduce APIM for secure, scalable, and controlled access to the service’s endpoints.  
+- [ ] **Multi-Language & Region Support**: Adapt LLM models and policies for multiple languages and healthcare regulatory environments.
+- [ ] **API Management (APIM) Integration**: Introduce APIM for secure, scalable, and controlled access to the service’s endpoints.
 - [ ] **Deeper LLMOps with AI Studio**: Extend AI Studio integration for advanced model lifecycle management, enhanced logging, continuous monitoring, and end-to-end orchestration.
 
 ## 🤝 Contributors & License
