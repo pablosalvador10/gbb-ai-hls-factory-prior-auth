@@ -525,7 +525,7 @@ def main() -> None:
         unsafe_allow_html=True,
     )
 
-    USE_O1 = True
+    USE_O1 = "o1" in os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_ID", "")
 
     st.sidebar.markdown(
         '<div class="centered-button-container">', unsafe_allow_html=True

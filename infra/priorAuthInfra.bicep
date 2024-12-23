@@ -165,15 +165,19 @@ module appIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.
     location: location
   }
 }
-// resource uaiStorageBlobContrib 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-//   scope: resourceGroup()
-//   name: guid(storageAccount.name, appIdentity.name, 'Storage Blob Data Contributor')
-//   properties: {
-//     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe') // Storage Blob Data Contributor
-//     principalId: appIdentity.outputs.principalId
-//     principalType: 'ServicePrincipal'
-//   }
-// }
+
+
+// Grant Role Assignments for the User Assigned App Identity to communicate with the storage account
+resource uaiStorageBlobContrib 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  scope: resourceGroup()
+  name: guid(storageAccount.name, appIdentity.name, 'Storage Blob Data Contributor')
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe') // Storage Blob Data Contributor
+    principalId: appIdentity.outputs.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
 resource uaiStorageBlobReader 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   scope: resourceGroup()
   name: guid(storageAccount.name, appIdentity.name, 'Storage Blob Data Reader')
