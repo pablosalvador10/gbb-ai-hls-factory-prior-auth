@@ -96,7 +96,7 @@ var jobAppContainers = {
   image: containerImage
   // command: ['/bin/bash', '-c', 'python /src/pipeline/indexerSetup.py --target \'/app\'']
   command: ['/bin/bash']
-  args: ['-c', 'python /src/pipeline/indexerSetup.py --target \'/app\'']
+  args: ['-c', 'python /app/src/pipeline/indexerSetup.py --target \'/app\'']
   resources: {
     cpu: json('2.0')
     memory: '4Gi'

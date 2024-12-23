@@ -33,27 +33,10 @@ hooks:
             --name $job_name \
             --image $(azd env get-value SERVICE_STREAMLIT_IMAGE_NAME)
 
-        if [ -n "$(azd env get-value APP_UAI_RESOURCE_ID)" ]; then
-          echo "Assigning user assigned identity to container app job..."
-          az containerapp job identity assign -n $job_name \
-            -g $rg_name \
-            --user-assigned $(azd env get-value APP_UAI_RESOURCE_ID)
-        fi
-
-
-        echo "Stopping running jobs..."
-        az containerapp job stop \
-            -g $rg_name \
-            --name $job_name
-
         echo "Starting the job to initialize the Search Index..."
         az containerapp job start \
             -g $rg_name \
-            --name $job_name \
-            --image $(azd env get-value SERVICE_STREAMLIT_IMAGE_NAME) \
-            --command "/bin/bash" \
-            --args "-c, python /app/src/pipeline/indexerSetup.py --target '/app'" \
-            --registry-identity $(azd env get-value APP_IDENTITY_RESOURCE_ID)
+            --name $job_name
 
         echo "Job started successfully."
   #     shell: pwsh

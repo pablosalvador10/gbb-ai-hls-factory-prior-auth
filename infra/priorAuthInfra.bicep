@@ -105,6 +105,17 @@ module searchService 'modules/data/search.bicep' = {
   }
 }
 
+resource searchStorageBlobReader 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  scope: resourceGroup()
+  name: guid(storageAccount.name, searchService.name, 'Storage Blob Data Reader')
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1') // Storage Blob Data Reader
+    principalId: searchService.outputs.searchServiceIdentityPrincipalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+
 // @TODO: Replace with AVM module
 module storageAccount 'modules/data/storage.bicep' = {
   name: 'storage-${name}-${uniqueSuffix}-deployment'
@@ -155,11 +166,20 @@ module appIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.
     location: location
   }
 }
-resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+// resource uaiStorageBlobContrib 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+//   scope: resourceGroup()
+//   name: guid(storageAccount.name, appIdentity.name, 'Storage Blob Data Contributor')
+//   properties: {
+//     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe') // Storage Blob Data Contributor
+//     principalId: appIdentity.outputs.principalId
+//     principalType: 'ServicePrincipal'
+//   }
+// }
+resource uaiStorageBlobReader 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   scope: resourceGroup()
-  name: guid(storageAccount.name, appIdentity.name, 'Storage Blob Data Contributor')
+  name: guid(storageAccount.name, appIdentity.name, 'Storage Blob Data Reader')
   properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe') // Storage Blob Data Contributor
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1') // Storage Blob Data Reader
     principalId: appIdentity.outputs.principalId
     principalType: 'ServicePrincipal'
   }
