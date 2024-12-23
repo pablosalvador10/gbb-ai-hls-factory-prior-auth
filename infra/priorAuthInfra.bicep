@@ -115,7 +115,6 @@ resource searchStorageBlobReader 'Microsoft.Authorization/roleAssignments@2022-0
   }
 }
 
-
 // @TODO: Replace with AVM module
 module storageAccount 'modules/data/storage.bicep' = {
   name: 'storage-${name}-${uniqueSuffix}-deployment'
