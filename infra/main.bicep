@@ -129,3 +129,4 @@ output APPLICATIONINSIGHTS_CONNECTION_STRING string = resources.outputs.APPLICAT
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = resources.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT
 output AZURE_CONTAINER_ENVIRONMENT_ID string = resources.outputs.AZURE_CONTAINER_ENVIRONMENT_ID
 output AZURE_OPENAI_KEY string = resources.outputs.AZURE_OPENAI_KEY
+output CONTAINER_APP_NAME string = resources.outputs.containerAppName
