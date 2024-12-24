@@ -1,5 +1,4 @@
 import os
-from typing import Any
 
 from jinja2 import Environment, FileSystemLoader
 from pydantic import BaseModel
@@ -125,25 +124,23 @@ class PromptManager:
             # Policy Text
             policy_text=policy_text,
         )
-    
+
     def create_prompt_summary_policy(
-            self,
-            policy_text: str,
-        ) -> str:
-            """
-            Create a prompt to summarize the policy text for prior authorization.
-    
-            Args:
-                policy_text (str): The policy text to be summarized.
-    
-            Returns:
-                str: The rendered prompt for summarizing the policy.
-            """
-            template_name = (
-                "summarize_policy_user.jinja"
-            )
-    
-            return self.get_prompt(
-                template_name,
-                policy_text=policy_text,
-            )
+        self,
+        policy_text: str,
+    ) -> str:
+        """
+        Create a prompt to summarize the policy text for prior authorization.
+
+        Args:
+            policy_text (str): The policy text to be summarized.
+
+        Returns:
+            str: The rendered prompt for summarizing the policy.
+        """
+        template_name = "summarize_policy_user.jinja"
+
+        return self.get_prompt(
+            template_name,
+            policy_text=policy_text,
+        )

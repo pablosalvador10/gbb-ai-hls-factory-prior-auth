@@ -2,12 +2,13 @@
 import asyncio
 import os
 from typing import Any, Dict, List, Optional, Type, Union
-from pydantic import BaseModel, ValidationError
-from colorama import Fore
 
-from utils.ml_logging import get_logger
+from colorama import Fore
+from pydantic import BaseModel, ValidationError
+
 from src.aoai.aoai_helper import AzureOpenAIManager
 from src.pipeline.prompt_manager import PromptManager
+from utils.ml_logging import get_logger
 
 
 class ClinicalDataExtractor:
@@ -36,7 +37,7 @@ class ClinicalDataExtractor:
         PATIENT_PROMPT_NER_USER: Optional[str] = None,
         PHYSICIAN_PROMPT_NER_USER: Optional[str] = None,
         CLINICIAN_PROMPT_NER_USER: Optional[str] = None,
-        local: bool = False
+        local: bool = False,
     ) -> None:
         """
         Initialize the ClinicalDataExtractor.
@@ -64,7 +65,9 @@ class ClinicalDataExtractor:
         if azure_openai_client is None:
             api_key = os.getenv("AZURE_OPENAI_KEY", None)
             if api_key is None:
-                self.logger.warning("No AZURE_OPENAI_KEY found. ClinicalDataExtractor may fail.")
+                self.logger.warning(
+                    "No AZURE_OPENAI_KEY found. ClinicalDataExtractor may fail."
+                )
             azure_openai_client = AzureOpenAIManager(api_key=api_key)
         self.azure_openai_client = azure_openai_client
 
@@ -77,12 +80,30 @@ class ClinicalDataExtractor:
         self.presence_penalty = presence_penalty
 
         # Fall back to prompt_manager if prompts not provided
-        self.PATIENT_PROMPT_NER_SYSTEM = PATIENT_PROMPT_NER_SYSTEM or self.prompt_manager.get_prompt("ner_patient_system.jinja")
-        self.PHYSICIAN_PROMPT_NER_SYSTEM = PHYSICIAN_PROMPT_NER_SYSTEM or self.prompt_manager.get_prompt("ner_physician_system.jinja")
-        self.CLINICIAN_PROMPT_NER_SYSTEM = CLINICIAN_PROMPT_NER_SYSTEM or self.prompt_manager.get_prompt("ner_clinician_system.jinja")
-        self.PATIENT_PROMPT_NER_USER = PATIENT_PROMPT_NER_USER or self.prompt_manager.get_prompt("ner_patient_user.jinja")
-        self.PHYSICIAN_PROMPT_NER_USER = PHYSICIAN_PROMPT_NER_USER or self.prompt_manager.get_prompt("ner_physician_user.jinja")
-        self.CLINICIAN_PROMPT_NER_USER = CLINICIAN_PROMPT_NER_USER or self.prompt_manager.get_prompt("ner_clinician_user.jinja")
+        self.PATIENT_PROMPT_NER_SYSTEM = (
+            PATIENT_PROMPT_NER_SYSTEM
+            or self.prompt_manager.get_prompt("ner_patient_system.jinja")
+        )
+        self.PHYSICIAN_PROMPT_NER_SYSTEM = (
+            PHYSICIAN_PROMPT_NER_SYSTEM
+            or self.prompt_manager.get_prompt("ner_physician_system.jinja")
+        )
+        self.CLINICIAN_PROMPT_NER_SYSTEM = (
+            CLINICIAN_PROMPT_NER_SYSTEM
+            or self.prompt_manager.get_prompt("ner_clinician_system.jinja")
+        )
+        self.PATIENT_PROMPT_NER_USER = (
+            PATIENT_PROMPT_NER_USER
+            or self.prompt_manager.get_prompt("ner_patient_user.jinja")
+        )
+        self.PHYSICIAN_PROMPT_NER_USER = (
+            PHYSICIAN_PROMPT_NER_USER
+            or self.prompt_manager.get_prompt("ner_physician_user.jinja")
+        )
+        self.CLINICIAN_PROMPT_NER_USER = (
+            CLINICIAN_PROMPT_NER_USER
+            or self.prompt_manager.get_prompt("ner_clinician_user.jinja")
+        )
 
         self.local = local
 
@@ -250,7 +271,7 @@ class ClinicalDataExtractor:
         image_files: List[str],
         PatientInformation: Type[BaseModel],
         PhysicianInformation: Type[BaseModel],
-        ClinicalInformation: Type[BaseModel]
+        ClinicalInformation: Type[BaseModel],
     ) -> Dict[str, Any]:
         """
         Extract patient, physician, and clinical data concurrently.
@@ -265,11 +286,21 @@ class ClinicalDataExtractor:
             A dictionary containing patient, physician, and clinician data along with their conversation histories.
         """
         try:
-            patient_data_task = self.extract_patient_data(image_files, PatientInformation)
-            physician_data_task = self.extract_physician_data(image_files, PhysicianInformation)
-            clinician_data_task = self.extract_clinician_data(image_files, ClinicalInformation)
+            patient_data_task = self.extract_patient_data(
+                image_files, PatientInformation
+            )
+            physician_data_task = self.extract_physician_data(
+                image_files, PhysicianInformation
+            )
+            clinician_data_task = self.extract_clinician_data(
+                image_files, ClinicalInformation
+            )
 
-            (patient_data, patient_hist), (physician_data, phys_hist), (clinician_data, clin_hist) = await asyncio.gather(
+            (
+                (patient_data, patient_hist),
+                (physician_data, phys_hist),
+                (clinician_data, clin_hist),
+            ) = await asyncio.gather(
                 patient_data_task, physician_data_task, clinician_data_task
             )
 

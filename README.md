@@ -42,22 +42,22 @@ This repository aims to **streamline and automate** the PA process using Azure A
 
 ## 🎉 Why This Repository?
 
-1. **Faster Decisions & Cost Efficiency**:  
+1. **Faster Decisions & Cost Efficiency**:
    Transform days-long PA turnarounds into hours, drastically reducing administrative overhead and associated costs.
 
-2. **Improved Patient Outcomes**:  
+2. **Improved Patient Outcomes**:
    Accelerate treatment approvals, minimize delays in critical care, and enhance overall patient satisfaction.
 
-3. **Automated Infrastructure**:  
+3. **Automated Infrastructure**:
    Utilize pre-built Azure Bicep templates and one-click deployment to set up the necessary infrastructure—Azure OpenAI, Storage, Cognitive Services—without manual, time-consuming configurations.
 
 4. **LLMOps & Evaluation with AI Foundry**:  
    Leverage Azure AI Foundry for continuous model performance evaluation and prompt optimization. Implement robust LLMOps practices, ensuring consistent improvements in accuracy and reliability over time.
 
-5. **Agentic Interactions via Semantic Kernel**:  
+5. **Agentic Interactions via Semantic Kernel**:
    Integrate Semantic Kernel to enable agentic interactions with the LLM, coordinating policy retrieval, data extraction, and decision-making steps efficiently and autonomously.
 
-6. **Research-Proven Prompts & Fine-Tuning**:  
+6. **Research-Proven Prompts & Fine-Tuning**:
    Benefit from research-backed prompt engineering strategies that improve precision and reduce hallucinations in model outputs, ensuring that the system’s recommendations align closely with clinical and policy requirements.
 
 ## 🚀 Quick Start
@@ -79,7 +79,7 @@ Want to see AutoAuth in action right away? Use the One-Click Deploy option to in
 For those looking for greater flexibility, the AutoAuth SDK enables you to embed PA microservices into your existing applications. You can customize, integrate, and extend the PA workflows to suit your specific needs. This approach provides a highly modular, code-first experience for developers who want to build their own solutions.
 
 > [!TIP]
-> *Want to customize or learn more about configuration?*  
+> *Want to customize or learn more about configuration?*
 > **[Read the detailed instructions on our GitHub Pages ➜](https://pablosalvador10.github.io/gbb-ai-hls-factory-prior-auth)**
 
 You can seamlessly integrate Prior Authorization (PA) processing into your application using our SDK. The SDK allows you to run PA workflows programmatically, enabling you to automate the end-to-end process.
@@ -152,6 +152,6 @@ With the AutoAuth SDK, you have the flexibility to automate end-to-end Prior Aut
 
 **License:** [MIT License](./LICENSE)
 
-### Disclaimer
-> [!IMPORTANT]
-> This software is provided for demonstration purposes only. It is not intended to be relied upon for any purpose. The creators of this software make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability or availability with respect to the software or the information, products, services, or related graphics contained in the software for any purpose. Any reliance you place on such information is therefore strictly at your own risk.
+---
+
+**Note:** Detailed information, technical architecture, customization steps, references, and further documentation are available on our **[GitHub Pages](https://pablosalvador10.github.io/gbb-ai-hls-factory-prior-auth)**.
