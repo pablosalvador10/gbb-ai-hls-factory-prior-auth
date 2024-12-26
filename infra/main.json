@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.32.4.45862",
-      "templateHash": "9798106779421178733"
+      "templateHash": "9684475916329380272"
     }
   },
   "parameters": {
@@ -185,7 +185,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.32.4.45862",
-              "templateHash": "6837345414012371453"
+              "templateHash": "14130350007591952049"
             }
           },
           "parameters": {
@@ -304,6 +304,20 @@
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', format('search-{0}-{1}-deployment', variables('name'), variables('uniqueSuffix')))]",
+                "[resourceId('Microsoft.Resources/deployments', format('storage-{0}-{1}-deployment', variables('name'), variables('uniqueSuffix')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "name": "[guid(format('storage-{0}-{1}-deployment', variables('name'), variables('uniqueSuffix')), format('uai-app-{0}-{1}-deployment', variables('name'), variables('uniqueSuffix')), 'Storage Blob Data Contributor')]",
+              "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+                "principalId": "[reference(resourceId('Microsoft.Resources/deployments', format('uai-app-{0}-{1}-deployment', variables('name'), variables('uniqueSuffix'))), '2022-09-01').outputs.principalId.value]",
+                "principalType": "ServicePrincipal"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', format('uai-app-{0}-{1}-deployment', variables('name'), variables('uniqueSuffix')))]",
                 "[resourceId('Microsoft.Resources/deployments', format('storage-{0}-{1}-deployment', variables('name'), variables('uniqueSuffix')))]"
               ]
             },
@@ -4627,6 +4641,10 @@
     "AZURE_OPENAI_KEY": {
       "type": "string",
       "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('rg-{0}-{1}-{2}', parameters('priorAuthName'), parameters('location'), parameters('environmentName'))), 'Microsoft.Resources/deployments', 'resources'), '2022-09-01').outputs.AZURE_OPENAI_KEY.value]"
+    },
+    "CONTAINER_APP_NAME": {
+      "type": "string",
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('rg-{0}-{1}-{2}', parameters('priorAuthName'), parameters('location'), parameters('environmentName'))), 'Microsoft.Resources/deployments', 'resources'), '2022-09-01').outputs.containerAppName.value]"
     }
   }
 }
