@@ -64,28 +64,31 @@ This repository aims to **streamline and automate** the PA process using Azure A
 
 AutoAuth offers two flexible options to get started:
 
-<<<<<<< HEAD
- + Deploy the Full AutoAuth Application (Front-End + Back-End) with One-Click Deploy
- - Integrate the AutoAuth SDK to Customize and Embed PA Microservices in Your Application
+### One-Click Deploy to Azure
 
-### One-Click Deploy (Full Application with UI)
-
-Want to see AutoAuth in action right away? Use the One-Click Deploy option to instantly set up the core infrastructure, including the front-end and back-end, in your Azure environment. With just a single click, you’ll have everything you need to start exploring AutoAuth's end-to-end capabilities.
-
-[![Deploy To Azure](utils/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fpablosalvador10%2Fgbb-ai-hls-factory-prior-auth%2Fmain%2Fdevops%2Finfra%2Fmain.json)
-[![Visualize](utils/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fpablosalvador10%2Fgbb-ai-hls-factory-prior-auth%2Fmain%2Fdevops%2Finfra%2Fmain.json)
-
-### Use the AutoAuth SDK to Build Custom Microservices
-
-For those looking for greater flexibility, the AutoAuth SDK enables you to embed PA microservices into your existing applications. You can customize, integrate, and extend the PA workflows to suit your specific needs. This approach provides a highly modular, code-first experience for developers who want to build their own solutions.
-=======
 [![Deploy To Azure](utils/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fpablosalvador10%2Fgbb-ai-hls-factory-prior-auth%2Finfra%2Fmain.json)
 [![Visualize](utils/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fpablosalvador10%2Fgbb-ai-hls-factory-prior-auth%2Finfra%2Fmain.json)
->>>>>>> 795e8f8 (documentation updates for azd)
 
 > [!TIP]
 > *Want to customize or learn more about configuration?*
 > **[Read the detailed instructions on our GitHub Pages ➜](https://pablosalvador10.github.io/gbb-ai-hls-factory-prior-auth)**
+
+To deploy this project end-to-end (infra provision and app deploy) using AZD, follow the guide provided in:
+### End-to-End Deployment Using AZD
+
+More detailed documentation can be found in [docs/azd_deployment.md](docs/azd_deployment.md)
+
+#### Steps:
+
+1. Install [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd)
+
+1. Run `azd up`
+
+1. Provide the cli values for your deployment
+
+1. Verify your deployment through `azd show`
+
+### PriorAuth SDK
 
 You can seamlessly integrate Prior Authorization (PA) processing into your application using our SDK. The SDK allows you to run PA workflows programmatically, enabling you to automate the end-to-end process.
 

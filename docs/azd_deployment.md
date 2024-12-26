@@ -1,3 +1,9 @@
+---
+layout: default
+title: "Azure DeveLoper CLI (azd) Deployment"
+nav_order: 7
+---
+
 # Azure Developer CLI (azd) Deployment Guide
 
 This guide provides step-by-step instructions for deploying the project using Azure Developer CLI (azd).
