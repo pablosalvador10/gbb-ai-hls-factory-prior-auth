@@ -64,8 +64,12 @@ jobs:
         id: provision
         run: azd provision --no-prompt
         env:
-          AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
           cosmosAdministratorPassword: ${{ secrets.COSMOS_ADMINISTRATOR_PASSWORD }}
+
+          # azd uses a pipeline secret called AZD_INITIAL_ENVIRONMENT_CONFIG to automatically save
+          # and set the value of all the required parameters in the pipeline.
+          # You only need to reference this secret in your pipeline:
+          AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
 
       - name: Deploy Application
         if: ${{ steps.provision.outputs.provisioned == 'true' || contains(github.event.head_commit.message, '/src/') || contains(github.event.head_commit.message, '/app/') || github.event.inputs.action == 'all' || github.event.inputs.action == 'provision' }}

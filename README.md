@@ -51,7 +51,7 @@ This repository aims to **streamline and automate** the PA process using Azure A
 3. **Automated Infrastructure**:
    Utilize pre-built Azure Bicep templates and one-click deployment to set up the necessary infrastructure—Azure OpenAI, Storage, Cognitive Services—without manual, time-consuming configurations.
 
-4. **LLMOps & Evaluation with AI Foundry**:  
+4. **LLMOps & Evaluation with AI Foundry**:
    Leverage Azure AI Foundry for continuous model performance evaluation and prompt optimization. Implement robust LLMOps practices, ensuring consistent improvements in accuracy and reliability over time.
 
 5. **Agentic Interactions via Semantic Kernel**:
@@ -64,6 +64,7 @@ This repository aims to **streamline and automate** the PA process using Azure A
 
 AutoAuth offers two flexible options to get started:
 
+<<<<<<< HEAD
  + Deploy the Full AutoAuth Application (Front-End + Back-End) with One-Click Deploy
  - Integrate the AutoAuth SDK to Customize and Embed PA Microservices in Your Application
 
@@ -77,6 +78,10 @@ Want to see AutoAuth in action right away? Use the One-Click Deploy option to in
 ### Use the AutoAuth SDK to Build Custom Microservices
 
 For those looking for greater flexibility, the AutoAuth SDK enables you to embed PA microservices into your existing applications. You can customize, integrate, and extend the PA workflows to suit your specific needs. This approach provides a highly modular, code-first experience for developers who want to build their own solutions.
+=======
+[![Deploy To Azure](utils/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fpablosalvador10%2Fgbb-ai-hls-factory-prior-auth%2Finfra%2Fmain.json)
+[![Visualize](utils/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fpablosalvador10%2Fgbb-ai-hls-factory-prior-auth%2Finfra%2Fmain.json)
+>>>>>>> 795e8f8 (documentation updates for azd)
 
 > [!TIP]
 > *Want to customize or learn more about configuration?*
@@ -115,9 +120,9 @@ With the AutoAuth SDK, you have the flexibility to automate end-to-end Prior Aut
 
 ### Near-Term Goals.
 - [ ] **Improve One-Click Deployment with Integrated Security and Landing Zone**: Enhance a one-click deployment solution a managed landing zone for streamlined setup and management.
-- [ ] **Multi-Language & Region Support**: Adapt LLM models and policies for multiple languages and healthcare regulatory environments.  
+- [ ] **Multi-Language & Region Support**: Adapt LLM models and policies for multiple languages and healthcare regulatory environments.
 - [ ] **Agentic Framework Leveraging Semantic Kernel**: Integrate the Agentic framework component using the Semantic Kernel as the core for context-aware and intelligent agent orchestration.
-- [ ] **API Management (APIM) Integration**: Introduce APIM for secure, scalable, and controlled access to the service’s endpoints.  
+- [ ] **API Management (APIM) Integration**: Introduce APIM for secure, scalable, and controlled access to the service’s endpoints.
 - [ ] **Deeper LLMOps with AI Foundry**: Extend AI Foundry integration for advanced model lifecycle management, enhanced logging, continuous monitoring, and end-to-end orchestration.
 
 ## 🤝 Contributors & License
