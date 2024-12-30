@@ -20,17 +20,14 @@ from src.documentintelligence.document_intelligence_helper import (
     AzureDocumentIntelligenceManager,
 )
 from src.entraid.generate_id import generate_unique_id
-from src.pipeline.agenticRag.run import AgenticRAG
-from src.pipeline.autoDetermination.run import AutoPADeterminator
-from src.pipeline.clinicalExtractor.run import ClinicalDataExtractor
-from src.pipeline.paprocessing.helpers import find_all_files
-from src.pipeline.paprocessing.models import (
+from src.extractors.pdfhandler import OCRHelper
+from src.pipeline.paprocessing.utils import find_all_files
+from src.pipeline.promptEngineering.models import (
     ClinicalInformation,
     PatientInformation,
     PhysicianInformation,
 )
-from src.pipeline.paprocessing.pdfhandler import OCRHelper
-from src.pipeline.prompt_manager import PromptManager
+from src.pipeline.promptEngineering.prompt_manager import PromptManager
 from src.storage.blob_helper import AzureBlobManager
 from utils.ml_logging import get_logger
 
@@ -192,18 +189,7 @@ class PAProcessingPipeline:
         self.clinical_data_extractor = ClinicalDataExtractor(
             azure_openai_client=self.azure_openai_client,
             prompt_manager=self.prompt_manager,
-            max_tokens=self.max_tokens,
-            top_p=self.top_p,
-            temperature=self.temperature,
-            frequency_penalty=self.frequency_penalty,
-            presence_penalty=self.presence_penalty,
-            PATIENT_PROMPT_NER_SYSTEM=self.PATIENT_PROMPT_NER_SYSTEM,
-            PHYSICIAN_PROMPT_NER_SYSTEM=self.PHYSICIAN_PROMPT_NER_SYSTEM,
-            CLINICIAN_PROMPT_NER_SYSTEM=self.CLINICIAN_PROMPT_NER_SYSTEM,
-            PATIENT_PROMPT_NER_USER=self.PATIENT_PROMPT_NER_USER,
-            PHYSICIAN_PROMPT_NER_USER=self.PHYSICIAN_PROMPT_NER_USER,
-            CLINICIAN_PROMPT_NER_USER=self.CLINICIAN_PROMPT_NER_USER,
-            local=self.local,
+            caseId=self.caseId,
         )
 
         self.agentic_rag = AgenticRAG(
@@ -212,27 +198,14 @@ class PAProcessingPipeline:
             search_client=self.search_client,
             azure_blob_manager=self.blob_manager,
             document_intelligence_client=self.document_intelligence_client,
-            max_tokens=self.max_tokens,
-            top_p=self.top_p,
-            temperature=self.temperature,
-            frequency_penalty=self.frequency_penalty,
-            presence_penalty=self.presence_penalty,
-            SYSTEM_PROMPT_QUERY_EXPANSION=self.SYSTEM_PROMPT_QUERY_EXPANSION,
-            SYSTEM_PROMPT_SUMMARIZE_POLICY=self.SYSTEM_PROMPT_SUMMARIZE_POLICY,
-            local=self.local,
+            caseId=self.caseId,
         )
 
         self.auto_pa_determinator = AutoPADeterminator(
             azure_openai_client=self.azure_openai_client,
             azure_openai_client_o1=self.azure_openai_client_o1,
             prompt_manager=self.prompt_manager,
-            max_tokens=self.max_tokens,
-            top_p=self.top_p,
-            temperature=self.temperature,
-            frequency_penalty=self.frequency_penalty,
-            presence_penalty=self.presence_penalty,
-            SYSTEM_PROMPT_PRIOR_AUTH=self.SYSTEM_PROMPT_PRIOR_AUTH,
-            local=self.local,
+            caseId=self.caseId,
         )
 
     def upload_files_to_blob(
@@ -330,6 +303,33 @@ class PAProcessingPipeline:
             self.logger.error(f"Failed to process files: {e}")
             return self.temp_dir, []
 
+    def get_policy_text_from_blob(self, blob_url: str) -> str:
+        """
+        Retrieve policy text from the specified blob URL using Document Intelligence.
+
+        Args:
+            blob_url: The URL to the policy blob.
+
+        Returns:
+            The text content of the downloaded policy document.
+        """
+        try:
+            blob_content = self.blob_manager.download_blob_to_bytes(blob_url)
+            if blob_content is None:
+                raise Exception(f"Failed to download blob from URL: {blob_url}")
+            self.logger.info(f"Blob content downloaded successfully from {blob_url}")
+
+            policy_text = self.document_intelligence_client.analyze_document(
+                document_input=blob_content,
+                model_type="prebuilt-layout",
+                output_format="markdown",
+            )
+            self.logger.info(f"Document analyzed successfully for blob {blob_url}")
+            return policy_text.content
+        except Exception as e:
+            self.logger.error(f"Failed to get policy text from blob {blob_url}: {e}")
+            return ""
+
     def get_conversation_history(self) -> Dict[str, Any]:
         """
         Retrieve the conversation history for this case.
@@ -417,6 +417,36 @@ class PAProcessingPipeline:
                 f"Failed to clean up temporary directory '{self.temp_dir}': {e}"
             )
 
+    async def summarize_policy(self, policy_text: str) -> str:
+        """
+        Summarize a given policy text using the LLM.
+
+        Args:
+            policy_text: The full text of the policy document.
+
+        Returns:
+            A summarized version of the policy text.
+        """
+        self.logger.info(Fore.CYAN + "Summarizing Policy...")
+        system_message_content = self.prompt_manager.get_prompt(
+            "summarize_policy_system.jinja"
+        )
+        prompt_user_query_summary = self.prompt_manager.create_prompt_summary_policy(
+            policy_text
+        )
+        api_response_query = await self.azure_openai_client.generate_chat_response(
+            query=prompt_user_query_summary,
+            system_message_content=system_message_content,
+            conversation_history=[],
+            response_format="text",
+            max_tokens=4096,
+            top_p=self.top_p,
+            temperature=self.temperature,
+            frequency_penalty=self.frequency_penalty,
+            presence_penalty=self.presence_penalty,
+        )
+        return api_response_query["response"]
+
     async def run(
         self,
         uploaded_files: List[str],
@@ -475,8 +505,7 @@ class PAProcessingPipeline:
                     progress += 1
                     progress_bar.progress(progress / total_steps)
 
-                # Extract all data
-                api_response_ner = await self.clinical_data_extractor.extract_all_data(
+                api_response_ner = await self.clinical_data_extractor.run(
                     image_files,
                     PatientInformation,
                     PhysicianInformation,
@@ -487,25 +516,16 @@ class PAProcessingPipeline:
                 patient_info = api_response_ner.get("patient_data")
                 physician_info = api_response_ner.get("physician_data")
 
-                # Log extracted data
-                if patient_info is not None:
-                    self.log_output(
-                        patient_info.model_dump(mode="json"),
-                        api_response_ner["patient_conv_history"],
-                        step="patient_information_extraction",
-                    )
-                if physician_info is not None:
-                    self.log_output(
-                        physician_info.model_dump(mode="json"),
-                        api_response_ner["physician_conv_history"],
-                        step="physician_information_extraction",
-                    )
-                if clinical_info is not None:
-                    self.log_output(
-                        clinical_info.model_dump(mode="json"),
-                        api_response_ner["clinician_conv_history"],
-                        step="clinical_information_extraction",
-                    )
+                self.log_output(
+                    data={
+                        "ocr_ner_results": {
+                            "patient_info": patient_info.model_dump(mode="json"),
+                            "physician_info": physician_info.model_dump(mode="json"),
+                            "clinical_info": clinical_info.model_dump(mode="json"),
+                        },
+                    },
+                    step="ocr_ner_extraction",
+                )
 
                 if streamlit:
                     status_text.write(
@@ -514,43 +534,41 @@ class PAProcessingPipeline:
                     progress += 1
                     progress_bar.progress(progress / total_steps)
 
-                api_response_query = (
-                    await self.agentic_rag.expand_query_and_search_policy(clinical_info)
+                agenticrag_results = await self.agentic_rag.run(
+                    clinical_info, max_retries=3
                 )
-                if api_response_query is None:
-                    raise ValueError("Query expansion and search returned None")
+                policies = agenticrag_results.get("policies", [])
 
-                # Store query expansion response
-                self.log_output(
-                    api_response_query["response"],
-                    api_response_query["conversation_history"],
-                    step="query_expansion",
-                )
+                if not policies:
+                    raise ValueError(
+                        "No policies found for the given clinical information"
+                    )
 
-                policy_location = self.agentic_rag.locate_policy(api_response_query)
-                if policy_location in ["No results found", "Error locating policy"]:
-                    self.logger.info("Policy not found.")
-                    if streamlit:
-                        status_text.error("Policy not found.")
-                        progress_bar.empty()
-                    return
-
-                policy_text = self.agentic_rag.get_policy_text_from_blob(
-                    policy_location
-                )
-                if policy_text is None:
-                    raise ValueError("Policy text extraction returned None")
+                # TODO: Currently deterministically choosing the top 1 result. Improve this logic based on the use case.
+                policy_texts = []
+                policy_text = None
+                if policies:
+                    policy = policies[0]
+                    policy_text = self.get_policy_text_from_blob(policy)
+                    if policy_text is None:
+                        raise ValueError(
+                            f"Policy text extraction returned None for policy: {policy}"
+                        )
+                    policy_texts.append(policy_text)
+                else:
+                    raise ValueError(
+                        "No policies found for the given clinical information"
+                    )
 
                 self.log_output(
                     data={
-                        "policy_location": policy_location,
-                        "policy_text": policy_text,
+                        "agenticrag_results": agenticrag_results,
                     },
-                    step="policy_extraction",
+                    step="policy_search",
                 )
 
                 async def summarize_policy_callback(text: str) -> str:
-                    summary = await self.agentic_rag.summarize_policy(text)
+                    summary = await self.summarize_policy(text)
                     self.log_output(
                         {"summary_policy": summary}, [], step="summarize_policy"
                     )
@@ -564,7 +582,7 @@ class PAProcessingPipeline:
                 (
                     final_determination,
                     final_conv_history,
-                ) = await self.auto_pa_determinator.generate_final_determination(
+                ) = await self.auto_pa_determinator.run(
                     caseId=self.caseId,
                     patient_info=patient_info,
                     physician_info=physician_info,
@@ -575,13 +593,13 @@ class PAProcessingPipeline:
                 )
 
                 self.log_output(
-                    {"final_determination": final_determination},
+                    {"pa_determination_results": final_determination},
                     final_conv_history,
                     step="llm_determination",
                 )
 
                 if streamlit:
-                    end_time = time.time()  # End timing
+                    end_time = time.time()
                     execution_time = end_time - start_time
                     status_text.success(
                         f"✅ **PA {self.caseId} Processing completed in {execution_time:.2f} seconds!**"
@@ -598,7 +616,7 @@ class PAProcessingPipeline:
             finally:
                 self.cleanup_temp_dir()
                 self.store_output()
-                end_time = time.time()  # End timing
+                end_time = time.time()
                 execution_time = end_time - start_time
                 self.logger.info(
                     f"PAprocessing completed for {self.caseId}. Execution time: {execution_time:.2f} seconds.",
