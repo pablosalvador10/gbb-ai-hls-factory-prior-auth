@@ -2,120 +2,62 @@
 
 name: gbb-ai-hls-factory-prior-auth
 metadata:
-    template: priorAuth-aca@1.11.0
+  template: priorAuth-aca@1.11.0
 services:
-    streamlit:
-        project: app/streamlit
-        host: containerapp
-        language: python
-        docker:
-          path: ../../Dockerfile
-          context: ../../
-          remoteBuild: true
+  frontend: # <-- This is the name of your service (tag:azdServiceName in bicep config)
+    project: app/frontend
+    host: containerapp
+    language: python
+    docker:
+      path: Dockerfile
+      context: ../../
+      remoteBuild: true
+    hooks:
+      postdeploy:
+        posix:
+          shell: sh
+          interactive: true
+          continueOnError: false
+          run: ../../utils/azd/hooks/postdeploy.sh
+
+        windows:
+          shell: pwsh
+          interactive: true
+          continueOnError: false
+          run: ../../utils/azd/hooks/postdeploy.ps1
+
+  backend: # <-- This is the name of your service (tag:azdServiceName in bicep config)
+    project: app/backend/paprocessing
+    host: containerapp
+    language: python
+    docker:
+      path: Dockerfile
+      context: ../../../
+      remoteBuild: true
 
 pipeline:
   provider: github
-hooks:
-  postdeploy:
-    posix:
-      shell: sh
-      interactive: true
-      continueOnError: false
-      run: |
-        echo "Logging into Azure Container Registry..."
-        az acr login --name $(azd env get-value AZURE_CONTAINER_REGISTRY_ENDPOINT)
-        job_name=$(azd env get-value CONTAINER_APP_NAME)-job
-        rg_name=$(azd env get-value RESOURCE_GROUP_NAME)
-
-        echo "Updating container app job image..."
-        az containerapp job update \
-            -g $rg_name \
-            --name $job_name \
-            --image $(azd env get-value SERVICE_STREAMLIT_IMAGE_NAME)
-
-        echo "Starting the job to initialize the Search Index..."
-        az containerapp job start \
-            -g $rg_name \
-            --name $job_name
-
-        echo "Job started successfully."
-    windows:
-      shell: pwsh
-      interactive: true
-      continueOnError: false
-      run: |
-        Write-Output "Logging into Azure Container Registry..."
-        az acr login --name $(azd env get-value AZURE_CONTAINER_REGISTRY_ENDPOINT)
-
-        Write-Output "Updating container app job image..."
-        az containerapp job update `
-            -g $rg_name `
-            --name $job_name `
-            --image $(azd env get-value SERVICE_STREAMLIT_IMAGE_NAME)
-
-        Write-Output "Starting the job to initialize the Search Index..."
-        az containerapp job start `
-            -g $(azd env get-value RESOURCE_GROUP_NAME) `
-            --name 'search-index-initialization'
-
-        Write-Output "Job started successfully."
-
   postprovision:
     posix:
       shell: sh
       interactive: true
       continueOnError: false
-      run: |
-        echo "
-        AZURE_OPENAI_ENDPOINT=$(azd env get-value AZURE_OPENAI_ENDPOINT)
-        AZURE_OPENAI_API_VERSION=$(azd env get-value AZURE_OPENAI_API_VERSION)
-        AZURE_OPENAI_EMBEDDING_DEPLOYMENT=$(azd env get-value AZURE_OPENAI_EMBEDDING_DEPLOYMENT)
-        AZURE_OPENAI_KEY=$(azd env get-value AZURE_OPENAI_KEY)
-        AZURE_OPENAI_CHAT_DEPLOYMENT_ID=$(azd env get-value AZURE_OPENAI_CHAT_DEPLOYMENT_ID)
-        AZURE_OPENAI_EMBEDDING_DIMENSIONS=$(azd env get-value AZURE_OPENAI_EMBEDDING_DIMENSIONS)
-        AZURE_SEARCH_SERVICE_NAME=$(azd env get-value AZURE_SEARCH_SERVICE_NAME)
-        AZURE_SEARCH_INDEX_NAME=$(azd env get-value AZURE_SEARCH_INDEX_NAME)
-        AZURE_AI_SEARCH_SERVICE_ENDPOINT=$(azd env get-value AZURE_AI_SEARCH_SERVICE_ENDPOINT)
-        AZURE_AI_SEARCH_ADMIN_KEY=$(azd env get-value AZURE_AI_SEARCH_ADMIN_KEY)
-        AZURE_BLOB_CONTAINER_NAME=$(azd env get-value AZURE_BLOB_CONTAINER_NAME)
-        AZURE_STORAGE_ACCOUNT_NAME=$(azd env get-value AZURE_STORAGE_ACCOUNT_NAME)
-        AZURE_STORAGE_ACCOUNT_KEY=$(azd env get-value AZURE_STORAGE_ACCOUNT_KEY)
-        AZURE_AI_SERVICES_KEY=$(azd env get-value AZURE_AI_SERVICES_KEY)
-        AZURE_STORAGE_CONNECTION_STRING=$(azd env get-value AZURE_STORAGE_CONNECTION_STRING)
-        AZURE_COSMOS_DB_DATABASE_NAME=$(azd env get-value AZURE_COSMOS_DB_DATABASE_NAME)
-        AZURE_COSMOS_DB_COLLECTION_NAME=$(azd env get-value AZURE_COSMOS_DB_COLLECTION_NAME)
-        AZURE_COSMOS_CONNECTION_STRING=$(azd env get-value AZURE_COSMOS_CONNECTION_STRING)
-        AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT=$(azd env get-value AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT)
-        AZURE_DOCUMENT_INTELLIGENCE_KEY=$(azd env get-value AZURE_DOCUMENT_INTELLIGENCE_KEY)
-        APPLICATIONINSIGHTS_CONNECTION_STRING=$(azd env get-value APPLICATIONINSIGHTS_CONNECTION_STRING)
-        AZURE_CONTAINER_REGISTRY_ENDPOINT=$(azd env get-value AZURE_CONTAINER_REGISTRY_ENDPOINT)
-        " > .env
+      run: ./utils/azd/hooks/postprovision.sh
 
     windows:
       shell: pwsh
       interactive: true
       continueOnError: false
-      run: |
-        echo "
-        AZURE_OPENAI_ENDPOINT=$(azd env get-value AZURE_OPENAI_ENDPOINT)
-        AZURE_OPENAI_API_VERSION=$(azd env get-value AZURE_OPENAI_API_VERSION)
-        AZURE_OPENAI_EMBEDDING_DEPLOYMENT=$(azd env get-value AZURE_OPENAI_EMBEDDING_DEPLOYMENT)
-        AZURE_OPENAI_CHAT_DEPLOYMENT_ID=$(azd env get-value AZURE_OPENAI_CHAT_DEPLOYMENT_ID)
-        AZURE_OPENAI_EMBEDDING_DIMENSIONS=$(azd env get-value AZURE_OPENAI_EMBEDDING_DIMENSIONS)
-        AZURE_SEARCH_SERVICE_NAME=$(azd env get-value AZURE_SEARCH_SERVICE_NAME)
-        AZURE_SEARCH_INDEX_NAME=$(azd env get-value AZURE_SEARCH_INDEX_NAME)
-        AZURE_AI_SEARCH_SERVICE_ENDPOINT=$(azd env get-value AZURE_AI_SEARCH_SERVICE_ENDPOINT)
-        AZURE_AI_SEARCH_ADMIN_KEY=$(azd env get-value AZURE_AI_SEARCH_ADMIN_KEY)
-        AZURE_BLOB_CONTAINER_NAME=$(azd env get-value AZURE_BLOB_CONTAINER_NAME)
-        AZURE_STORAGE_ACCOUNT_NAME=$(azd env get-value AZURE_STORAGE_ACCOUNT_NAME)
-        AZURE_STORAGE_ACCOUNT_KEY=$(azd env get-value AZURE_STORAGE_ACCOUNT_KEY)
-        AZURE_AI_SERVICES_KEY=$(azd env get-value AZURE_AI_SERVICES_KEY)
-        AZURE_STORAGE_CONNECTION_STRING=$(azd env get-value AZURE_STORAGE_CONNECTION_STRING)
-        AZURE_COSMOS_DB_DATABASE_NAME=$(azd env get-value AZURE_COSMOS_DB_DATABASE_NAME)
-        AZURE_COSMOS_DB_COLLECTION_NAME=$(azd env get-value AZURE_COSMOS_DB_COLLECTION_NAME)
-        AZURE_COSMOS_CONNECTION_STRING=$(azd env get-value AZURE_COSMOS_CONNECTION_STRING)
-        AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT=$(azd env get-value AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT)
-        AZURE_DOCUMENT_INTELLIGENCE_KEY=$(azd env get-value AZURE_DOCUMENT_INTELLIGENCE_KEY)
-        APPLICATIONINSIGHTS_CONNECTION_STRING=$(azd env get-value APPLICATIONINSIGHTS_CONNECTION_STRING)
-        AZURE_CONTAINER_REGISTRY_ENDPOINT=$(azd env get-value AZURE_CONTAINER_REGISTRY_ENDPOINT)
-        " > .env
+      run: ./utils/azd/hooks/postprovision.ps1
+  postdown:
+    posix:
+      shell: sh
+      interactive: true
+      continueOnError: false
+      run: azd env set CONTAINER_JOB_RUN false
+
+    windows:
+      shell: pwsh
+      interactive: true
+      continueOnError: false
+      run: azd env set CONTAINER_JOB_RUN false
