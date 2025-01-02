@@ -9,6 +9,7 @@ from pydantic import BaseModel, ValidationError
 from src.aoai.aoai_helper import AzureOpenAIManager
 from src.pipeline.promptEngineering.prompt_manager import PromptManager
 from src.pipeline.utils import load_config
+from utils.ml_logging import get_logger
 
 
 class ClinicalDataExtractor:
@@ -24,7 +25,7 @@ class ClinicalDataExtractor:
 
     def __init__(
         self,
-        config_file: str = "ClinicalExtractor\\settings.yaml",
+        config_file: str = os.path.join("clinicalExtractor", "settings.yaml"),
         azure_openai_client: Optional[AzureOpenAIManager] = None,
         prompt_manager: Optional[PromptManager] = None,
         caseId: Optional[str] = None,
@@ -45,11 +46,17 @@ class ClinicalDataExtractor:
         self.caseId = caseId
         self.prefix = f"[caseID: {self.caseId}] " if self.caseId else ""
 
-        self.logger = get_logger(
-            name=self.run_config["logging"]["name"],
-            level=self.run_config["logging"]["level"],
-            tracing_enabled=self.run_config["logging"]["enable_tracing"],
-        )
+        try:
+            self.logger = get_logger(
+                name=self.run_config["logging"]["name"],
+                level=self.run_config["logging"]["level"],
+                tracing_enabled=self.run_config["logging"]["enable_tracing"],
+            )
+        except KeyError as e:
+            print(
+                f"KeyError: {e}. Please check your configuration file for missing keys."
+            )
+            raise
 
         if azure_openai_client is None:
             api_key = os.getenv("AZURE_OPENAI_KEY", None)

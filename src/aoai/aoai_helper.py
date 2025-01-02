@@ -15,6 +15,7 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import openai
 import requests
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
 from openai import AzureOpenAI
 
@@ -60,6 +61,7 @@ class AzureOpenAIManager:
 
         """
         self.api_key = api_key or os.getenv("AZURE_OPENAI_KEY")
+
         self.api_version = (
             api_version or os.getenv("AZURE_OPENAI_API_VERSION") or "2024-02-01"
         )
@@ -82,11 +84,21 @@ class AzureOpenAIManager:
             "AZURE_AOAI_WHISPER_MODEL_DEPLOYMENT_ID"
         )
 
-        self.openai_client = AzureOpenAI(
-            api_key=self.api_key,
-            api_version=self.api_version,
-            azure_endpoint=self.azure_endpoint,
-        )
+        if not self.api_key:
+            token_provider = get_bearer_token_provider(
+                DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
+            )
+            self.openai_client = AzureOpenAI(
+                api_version=self.api_version,
+                azure_endpoint=self.azure_endpoint,
+                azure_ad_token_provider=token_provider,
+            )
+        else:
+            self.openai_client = AzureOpenAI(
+                api_version=self.api_version,
+                azure_endpoint=self.azure_endpoint,
+                api_key=self.api_key,
+            )
 
         self.tokenizer = AzureOpenAITokenizer()
 

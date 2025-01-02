@@ -2,13 +2,22 @@
     "version": "0.1.0",
     "configurations": [
         {
-            "name": "Python: Streamlit",
+            "name": "Python: Streamlit (Frontend)",
             "type": "python",
             "request": "launch",
             "module": "streamlit",
             "args": [
             "run",
-            "${workspaceFolder}/app/streamlit/Home.py",
+            "${workspaceFolder}/app/frontend/streamlit/Home.py",
+            ],
+        },
+        {
+            "name": "Python: API (Backend)",
+            "type": "python",
+            "request": "launch",
+            "args": [
+            "run",
+            "${workspaceFolder}/app/backend/app.py",
             ],
         },
         {

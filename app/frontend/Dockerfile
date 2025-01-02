@@ -24,16 +24,11 @@ RUN apt-get update && \
     apt-get -y install gcc mono-mcs python3-dev && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /app/.streamlit
-COPY app/settings/config.toml /app/.streamlit/config.toml
+COPY app/frontend/settings/config.toml /app/.streamlit/config.toml
 RUN pip install --no-cache-dir -r requirements.txt
 ENV STREAMLIT_CONFIG_FILE=/app/.streamlit/config.toml
 
 EXPOSE 8501
 
 ENTRYPOINT ["streamlit", "run"]
-<<<<<<<< HEAD:Dockerfile
-CMD ["app/streamlit/Home.py"]
-========
 CMD ["app/frontend/streamlit/Home.py"]
-
->>>>>>>> pablosal/5-feature-agentic-rag-enhancements:app/frontend/Dockerfile

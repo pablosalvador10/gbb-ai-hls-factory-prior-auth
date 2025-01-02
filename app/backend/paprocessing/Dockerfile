@@ -12,7 +12,8 @@ COPY app /app/app
 COPY utils/ml_logging.py /app/utils/ml_logging.py
 COPY utils/__init__.py /app/utils/__init__.py
 COPY requirements.txt /app/requirements.txt
-
+# Set the PYTHONPATH environment variable
+ENV PYTHONPATH=/app
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 

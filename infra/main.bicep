@@ -9,8 +9,11 @@ param environmentName string
 @description('Primary location for all resources')
 param location string
 
-@description('Flag to indicate if Streamlit app image exists. This is managed by AZD')
-param streamlitExists bool = false
+@description('Flag to indicate if Frontend app image exists. This is managed by AZD')
+param frontendExists bool = false
+
+@description('Flag to indicate if Backend app image exists. This is managed by AZD')
+param backendExists bool = false
 
 @description('Admin password for the cluster')
 @secure()
@@ -35,6 +38,11 @@ param acrUsername string = ''
 @minLength(0)
 param acrPassword string = ''
 
+@description('Tags to be applied to all resources')
+param tags object = {
+  'environment': environmentName
+  'location': location
+}
 
 @description('API Version of the OpenAI API')
 param openAiApiVersion string = '2024-08-01-preview'
@@ -67,15 +75,16 @@ param storageBlobContainerName string = 'default'
 // Note that 'azd-service-name' tags should be applied separately to service host resources.
 // Example usage:
 //   tags: union(tags, { 'azd-service-name': <service name in azure.yaml> })
-var tags = {
+var azd_tags = union(tags,{
+  'hidden-title': 'Prior Auth ${environmentName}'
   'azd-env-name': environmentName
-}
+})
 
 // Organize resources in a resource group
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: 'rg-${priorAuthName}-${location}-${environmentName}'
   location: location
-  tags: tags
+  tags: azd_tags
 }
 
 module resources 'priorAuthInfra.bicep' = {
@@ -83,15 +92,13 @@ module resources 'priorAuthInfra.bicep' = {
   name: 'resources'
   params: {
     // Required Parameters
-    tags: tags
+    tags: azd_tags
     cosmosAdministratorPassword: cosmosAdministratorPassword
 
     // Optional Parameters
-    streamlitExists: streamlitExists
+    frontendExists: frontendExists
+    backendExists: backendExists
     priorAuthName: priorAuthName
-    acrContainerImage: acrContainerImage
-    acrUsername: acrUsername
-    acrPassword: acrPassword
     openAiApiVersion: openAiApiVersion
     chatCompletionModels: chatCompletionModels
     embeddingModel: embeddingModel
@@ -100,12 +107,14 @@ module resources 'priorAuthInfra.bicep' = {
   }
 }
 
-// Setting the outputs at main.bicep sets the environment variables within azd
+// ----------------------------------------------------------------------------------------
+// Setting the outputs at main.bicep (or whatever is defined in your azure.yaml's infra block) sets
+//  the environment variables within azd post provisioning
+// ----------------------------------------------------------------------------------------
 output RESOURCE_GROUP_NAME string = rg.name
-output APP_IDENTITY_CLIENT_ID string = resources.outputs.appIdentityClientId
-output APP_IDENTITY_RESOURCE_ID string = resources.outputs.appIdentityResourceId
-output REGISTRY_NAME string = resources.outputs.registryName
+output CONTAINER_JOB_NAME string = resources.outputs.CONTAINER_JOB_NAME
 
+// Outputs to initialize local .env file (see azure.yaml postprovisioning)
 output AZURE_OPENAI_ENDPOINT string = resources.outputs.AZURE_OPENAI_ENDPOINT
 output AZURE_OPENAI_API_VERSION string = resources.outputs.AZURE_OPENAI_API_VERSION
 output AZURE_OPENAI_EMBEDDING_DEPLOYMENT string = resources.outputs.AZURE_OPENAI_EMBEDDING_DEPLOYMENT
@@ -129,4 +138,3 @@ output APPLICATIONINSIGHTS_CONNECTION_STRING string = resources.outputs.APPLICAT
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = resources.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT
 output AZURE_CONTAINER_ENVIRONMENT_ID string = resources.outputs.AZURE_CONTAINER_ENVIRONMENT_ID
 output AZURE_OPENAI_KEY string = resources.outputs.AZURE_OPENAI_KEY
-output CONTAINER_APP_NAME string = resources.outputs.containerAppName

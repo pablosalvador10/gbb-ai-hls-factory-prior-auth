@@ -18,7 +18,7 @@ class AutoPADeterminator:
 
     def __init__(
         self,
-        config_file: str = "autoDetermination\\settings.yaml",
+        config_file: str = os.path.join("autoDetermination", "settings.yaml"),
         azure_openai_client: Optional[AzureOpenAIManager] = None,
         azure_openai_client_o1: Optional[AzureOpenAIManager] = None,
         prompt_manager: Optional[PromptManager] = None,

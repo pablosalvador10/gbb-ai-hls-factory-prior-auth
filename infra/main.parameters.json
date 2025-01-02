@@ -14,8 +14,11 @@
     "priorAuthName": {
       "value": "${PRIOR_AUTH_NAME:-priorAuth}"
     },
-    "streamlitExists": {
-      "value": "${SERVICE_STREAMLIT_RESOURCE_EXISTS:-false}"
+    "frontendExists": {
+      "value": "${SERVICE_FRONTEND_RESOURCE_EXISTS:-false}"
+    },
+    "backendExists": {
+      "value": "${SERVICE_BACKEND_RESOURCE_EXISTS:-false}"
     },
     "acrContainerImage": {
       "value": "${ACR_CONTAINER_IMAGE:-}"
@@ -44,7 +47,7 @@
         "name": "text-embedding-3-large",
         "version": "1",
         "skuName": "Standard",
-        "capacity": 16
+        "capacity": 25
       }
     },
     "embeddingModelDimension": {
@@ -52,6 +55,14 @@
     },
     "storageBlobContainerName": {
       "value": "${STORAGE_BLOB_CONTAINER_NAME:-default}"
+    }
+    ,
+    "tags": {
+      "value": {
+        "project": "${PROJECT_NAME:-priorAuth}",
+        "owner": "${OWNER_NAME:-contoso}",
+        "costCenter": "${COST_CENTER:-00000}"
+      }
     }
   }
 }

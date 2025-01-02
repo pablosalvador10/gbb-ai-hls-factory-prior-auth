@@ -3,11 +3,7 @@
 # Enable command tracing
 set -x
 
-echo "Checking if the post-deployment job needs to be run..."
-if [ -z "$(azd env get-value SERVICE_FRONTEND_IMAGE_NAME)" ]; then
-    echo "Backend image does not exist. Clearing CONTAINER_JOB_RUN value..."
-    azd env set CONTAINER_JOB_RUN false
-fi
+echo "Generating .env file..."
 echo "
 AZURE_OPENAI_ENDPOINT=$(azd env get-value AZURE_OPENAI_ENDPOINT)
 AZURE_OPENAI_API_VERSION=$(azd env get-value AZURE_OPENAI_API_VERSION)
@@ -32,3 +28,9 @@ AZURE_DOCUMENT_INTELLIGENCE_KEY=$(azd env get-value AZURE_DOCUMENT_INTELLIGENCE_
 APPLICATIONINSIGHTS_CONNECTION_STRING=$(azd env get-value APPLICATIONINSIGHTS_CONNECTION_STRING)
 AZURE_CONTAINER_REGISTRY_ENDPOINT=$(azd env get-value AZURE_CONTAINER_REGISTRY_ENDPOINT)
 " > .env
+
+echo "Checking if the post-deployment job needs to be run..."
+if [ -z "$(azd env get-value SERVICE_FRONTEND_IMAGE_NAME)" ]; then
+    echo "Backend image does not exist. Clearing CONTAINER_JOB_RUN value..."
+    azd env set CONTAINER_JOB_RUN false
+fi

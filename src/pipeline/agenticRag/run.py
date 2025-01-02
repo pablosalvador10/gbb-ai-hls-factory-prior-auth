@@ -30,7 +30,7 @@ class AgenticRAG:
 
     def __init__(
         self,
-        config_file: str = "agenticRag\\settings.yaml",
+        config_file: str = os.path.join("agenticRag", "settings.yaml"),
         azure_openai_client: Optional[AzureOpenAIManager] = None,
         prompt_manager: Optional[PromptManager] = None,
         search_client: Optional[SearchClient] = None,

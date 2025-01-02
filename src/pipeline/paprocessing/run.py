@@ -10,8 +10,9 @@ import dotenv
 import streamlit as st
 import yaml
 from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
-from colorama import init
+from colorama import Fore, init
 from opentelemetry import trace
 
 from src.aoai.aoai_helper import AzureOpenAIManager
@@ -21,6 +22,9 @@ from src.documentintelligence.document_intelligence_helper import (
 )
 from src.entraid.generate_id import generate_unique_id
 from src.extractors.pdfhandler import OCRHelper
+from src.pipeline.agenticRag.run import AgenticRAG
+from src.pipeline.autoDetermination.run import AutoPADeterminator
+from src.pipeline.clinicalExtractor.run import ClinicalDataExtractor
 from src.pipeline.paprocessing.utils import find_all_files
 from src.pipeline.promptEngineering.models import (
     ClinicalInformation,
@@ -102,7 +106,12 @@ class PAProcessingPipeline:
         azure_document_intelligence_key = azure_document_intelligence_key or os.getenv(
             "AZURE_DOCUMENT_INTELLIGENCE_KEY"
         )
-
+        if azure_search_admin_key is None:
+            self.search_client = SearchClient(
+                endpoint=azure_search_service_endpoint,
+                index_name=azure_search_index_name,
+                credential=DefaultAzureCredential(),
+            )
         self.azure_openai_client = AzureOpenAIManager(
             completion_model_name=azure_openai_chat_deployment_id,
             api_key=azure_openai_key,
@@ -110,6 +119,7 @@ class PAProcessingPipeline:
         self.azure_openai_client_o1 = AzureOpenAIManager(
             api_version=os.getenv("AZURE_OPENAI_API_VERSION_01") or "2024-09-01-preview"
         )
+
         self.search_client = SearchClient(
             endpoint=azure_search_service_endpoint,
             index_name=azure_search_index_name,
