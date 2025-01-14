@@ -1,8 +1,5 @@
 targetScope = 'subscription'
 
-@description('The principal ID of the user or service principal that will be granted access to the resources.')
-param principalId string
-
 @minLength(1)
 @maxLength(64)
 @description('Name of the environment that can be used as part of naming resource convention')
