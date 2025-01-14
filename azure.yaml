@@ -47,13 +47,13 @@ hooks:
       run: |
         echo "Setting executable permissions on hook scripts..."
         chmod +x ./utils/azd/hooks/*.sh
-        ./utils/azd/hooks/preprovision.sh
-    windows:
-      shell: pwsh
-      interactive: true
-      continueOnError: false
-      # run: ../utils/azd/hooks/preprovision.ps1
-      run: .\utils\azd\hooks\preprovision.ps1
+        # ./utils/azd/hooks/preprovision.sh
+    # windows:
+    #   shell: pwsh
+    #   interactive: true
+    #   continueOnError: false
+    #   # run: ../utils/azd/hooks/preprovision.ps1
+    #   run: .\utils\azd\hooks\preprovision.ps1
   postprovision:
     posix:
       shell: sh
