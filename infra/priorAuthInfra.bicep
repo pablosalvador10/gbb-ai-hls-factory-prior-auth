@@ -16,6 +16,9 @@ param tags object = {}
 @secure()
 param cosmosAdministratorPassword string
 
+param cosmosDbCollectionName string = 'temp'
+param cosmosDbDatabaseName string = 'priorauthsessions'
+
 @description('API Version of the OpenAI API')
 param openAiApiVersion string = '2024-08-01-preview'
 
@@ -187,6 +190,9 @@ module registry 'br/public:avm/res/container-registry/registry:0.1.1' = {
     ]
   }
 }
+
+var storageConnString = 'ResourceId=${storageAccount.outputs.storageAccountId}'
+
 var containerEnvArray = [
   {
     name: 'AZURE_CLIENT_ID'
@@ -238,11 +244,11 @@ var containerEnvArray = [
   }
   {
     name: 'AZURE_COSMOS_DB_DATABASE_NAME'
-    value: 'priorauthsessions'
+    value: cosmosDbDatabaseName
   }
   {
     name: 'AZURE_COSMOS_DB_COLLECTION_NAME'
-    value: 'temp'
+    value: cosmosDbCollectionName
   }
   {
     name: 'AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT'
@@ -263,7 +269,7 @@ var containerEnvArray = [
   }
   {
     name: 'AZURE_STORAGE_CONNECTION_STRING'
-    value: 'ResourceId=${storageAccount.outputs.storageAccountId}' // Use the ResourceID to enable Azure Search to use Managed Identity to create Data Source
+    value: storageConnString
   }
   {
     name: 'AZURE_AI_SERVICES_KEY'
@@ -488,10 +494,10 @@ output AZURE_AI_SEARCH_SERVICE_ENDPOINT string = searchService.outputs.searchSer
 output AZURE_STORAGE_ACCOUNT_KEY string = storageAccount.outputs.storageAccountPrimaryKey
 output AZURE_BLOB_CONTAINER_NAME string = storageBlobContainerName
 output AZURE_STORAGE_ACCOUNT_NAME string = storageAccount.outputs.storageAccountName
-output AZURE_STORAGE_CONNECTION_STRING string = storageAccount.outputs.storageAccountPrimaryConnectionString
-// output AZURE_STORAGE_CONNECTION_STRING string = 'ResourceId=${storageAccount.outputs.storageAccountId}' // Use the ResourceID to enable Azure Search to use Managed Identity to create Data Source
+output AZURE_STORAGE_CONNECTION_STRING string = storageConnString
 output AZURE_AI_SERVICES_KEY string = multiAccountAiServices.outputs.aiServicesPrimaryKey
 output AZURE_COSMOS_DB_DATABASE_NAME string = 'priorauthsessions'
+
 output AZURE_COSMOS_DB_COLLECTION_NAME string = 'temp'
 output AZURE_COSMOS_CONNECTION_STRING string = cosmosDb.outputs.mongoConnectionString
 output AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT string = docIntelligence.outputs.aiServicesEndpoint
