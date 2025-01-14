@@ -51,6 +51,11 @@ outputJson=$(jq -n \
                 --arg applicationClientId "$applicationClientId" \
                 '{applicationObjectId: $applicationObjectId, applicationClientId: $applicationClientId}' )
                 # --arg servicePrincipalObjectId "$servicePrincipalObjectId" \
+
+# Add the applicationObjectId and applicationClientId to azd environment
+azd env set AZURE_AD_APP_OBJECT_ID $applicationObjectId
+azd env set AZURE_AD_APP_CLIENT_ID $applicationClientId
+
 if [ -n "$AZ_SCRIPTS_OUTPUT_PATH" ]; then
     echo $outputJson > $AZ_SCRIPTS_OUTPUT_PATH
 else
