@@ -2,11 +2,12 @@ import os
 from typing import Any, Dict, Iterator, List, Optional, Union
 
 from azure.ai.documentintelligence import DocumentIntelligenceClient, models
-
-# from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, Document
 from azure.core.credentials import AzureKeyCredential
 from azure.core.polling import LROPoller
+
+# from azure.ai.formrecognizer import DocumentAnalysisClient
+from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
 from langchain_core.documents import Document as LangchainDocument
 
@@ -53,11 +54,21 @@ class AzureDocumentIntelligenceManager:
         self.azure_key = azure_key or os.getenv("AZURE_DOCUMENT_INTELLIGENCE_KEY")
 
         # Validate required configurations for Document Analysis Client
-        if not self.azure_endpoint or not self.azure_key:
+        if not self.azure_endpoint:
             raise ValueError(
                 "Azure endpoint and key must be provided either as parameters or in environment variables."
             )
 
+        credential = DefaultAzureCredential()
+        if self.azure_key:
+            credential = AzureKeyCredential(self.azure_key)
+
+        self.document_analysis_client = DocumentIntelligenceClient(
+            endpoint=self.azure_endpoint,
+            credential=credential,
+            headers={"x-ms-useragent": "langchain-parser/1.0.0"},
+            polling_interval=30,
+        )
         self.document_analysis_client = DocumentIntelligenceClient(
             endpoint=self.azure_endpoint,
             credential=AzureKeyCredential(self.azure_key),

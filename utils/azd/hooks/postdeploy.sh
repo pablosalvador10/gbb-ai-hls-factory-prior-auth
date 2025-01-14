@@ -1,9 +1,14 @@
 #!/bin/bash
 
+# set -x
+
 echo "Checking for Initialization Flag to run Job..."
 if [ "$(azd env get-value CONTAINER_JOB_RUN)" = "true" ]; then
     echo "Initialization job already run. Skipping..."
     exit 0
+elif [ -z "$(azd env get-value SERVICE_FRONTEND_IMAGE_NAME)" ]; then
+    echo "SERVICE_FRONTEND_IMAGE_NAME is null. Ensure your azd deployment succeeded. Exiting..."
+    exit 1
 else
     echo "Logging into Azure Container Registry..."
     az acr login --name $(azd env get-value AZURE_CONTAINER_REGISTRY_ENDPOINT)

@@ -18,13 +18,13 @@ services:
           shell: sh
           interactive: true
           continueOnError: false
-          run: ./utils/azd/hooks/postdeploy.sh
+          run: ../../utils/azd/hooks/postdeploy.sh
 
         windows:
           shell: pwsh
           interactive: true
           continueOnError: false
-          run: ./utils/azd/hooks/postdeploy.ps1
+          run: ..\..\utils\azd\hooks\postdeploy.ps1
 
   backend: # <-- This is the name of your service (tag:azdServiceName in bicep config)
     project: app/backend/paprocessing
@@ -53,7 +53,7 @@ hooks:
       interactive: true
       continueOnError: false
       # run: ../utils/azd/hooks/preprovision.ps1
-      run: ./utils/azd/hooks/preprovision.ps1
+      run: .\utils\azd\hooks\preprovision.ps1
   postprovision:
     posix:
       shell: sh
@@ -65,7 +65,7 @@ hooks:
       shell: pwsh
       interactive: true
       continueOnError: false
-      run: ./utils/azd/hooks/postprovision.ps1
+      run: .\utils\azd\hooks\postprovision.ps1
 
   postdown:
     posix:

@@ -1,5 +1,8 @@
 targetScope = 'subscription'
 
+@description('The principal ID of the user or service principal that will be granted access to the resources.')
+param principalId string
+
 @minLength(1)
 @maxLength(64)
 @description('Name of the environment that can be used as part of naming resource convention')
@@ -24,24 +27,10 @@ param cosmosAdministratorPassword string
 @description('Name for the PriorAuth resource and used to derive the name of dependent resources.')
 param priorAuthName string = 'priorAuth'
 
-@description('ACR container image url')
-@secure()
-param acrContainerImage string = ''
-
-@description('Admin user for the ACR registry of the container image')
-@secure()
-@minLength(0)
-param acrUsername string = ''
-
-@description('Admin password for the ACR registry of the container image')
-@secure()
-@minLength(0)
-param acrPassword string = ''
-
 @description('Tags to be applied to all resources')
 param tags object = {
-  'environment': environmentName
-  'location': location
+  environment: environmentName
+  location: location
 }
 
 @description('API Version of the OpenAI API')
@@ -66,7 +55,7 @@ param embeddingModel object = {
 }
 
 @description('Embedding model size for the OpenAI Embedding deployment')
-param embeddingModelDimension string = '1536'
+param embeddingModelDimension string = '3072' // for embeddings-3-large, 3072 is expected
 
 @description('Storage Blob Container name to land the files for Prior Auth')
 param storageBlobContainerName string = 'default'
@@ -87,6 +76,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   tags: azd_tags
 }
 
+
 module resources 'priorAuthInfra.bicep' = {
   scope: rg
   name: 'resources'
@@ -94,7 +84,7 @@ module resources 'priorAuthInfra.bicep' = {
     // Required Parameters
     tags: azd_tags
     cosmosAdministratorPassword: cosmosAdministratorPassword
-
+    principalId: principalId
     // Optional Parameters
     frontendExists: frontendExists
     backendExists: backendExists
@@ -138,3 +128,4 @@ output APPLICATIONINSIGHTS_CONNECTION_STRING string = resources.outputs.APPLICAT
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = resources.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT
 output AZURE_CONTAINER_ENVIRONMENT_ID string = resources.outputs.AZURE_CONTAINER_ENVIRONMENT_ID
 output AZURE_OPENAI_KEY string = resources.outputs.AZURE_OPENAI_KEY
+output AZURE_AI_SEARCH_SERVICE_ENDPOINT string = resources.outputs.AZURE_AI_SEARCH_SERVICE_ENDPOINT

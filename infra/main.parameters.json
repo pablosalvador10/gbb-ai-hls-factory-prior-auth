@@ -23,6 +23,9 @@
     "acrContainerImage": {
       "value": "${ACR_CONTAINER_IMAGE:-}"
     },
+    "principalId": {
+      "value": "${PRINCIPAL_ID:-}"
+    },
     "acrUsername": {
       "value": "${ACR_USERNAME:-}"
     },

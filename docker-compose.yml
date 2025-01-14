@@ -3,7 +3,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: app/frontend/Dockerfile
+      dockerfile: ./app/frontend/Dockerfile
     ports:
       - "8081:8501"
     env_file:
@@ -11,7 +11,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: app/backend/Dockerfile
+      dockerfile: ./app/backend/Dockerfile
     ports:
       - "9000:9000"
     env_file:

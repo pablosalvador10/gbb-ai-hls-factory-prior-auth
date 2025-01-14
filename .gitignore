@@ -6,7 +6,7 @@ __pycache__/
 *.env
 # C extensions
 *.so
-
+paprocessing_env
 # Distribution / packaging
 .Python
 build/

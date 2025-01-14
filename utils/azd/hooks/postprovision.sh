@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Enable command tracing
-set -x
-
 echo "Generating .env file..."
 echo "
 AZURE_OPENAI_ENDPOINT=$(azd env get-value AZURE_OPENAI_ENDPOINT)
