@@ -84,7 +84,6 @@ module resources 'priorAuthInfra.bicep' = {
     // Required Parameters
     tags: azd_tags
     cosmosAdministratorPassword: cosmosAdministratorPassword
-    principalId: principalId
     // Optional Parameters
     frontendExists: frontendExists
     backendExists: backendExists
