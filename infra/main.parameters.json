@@ -38,7 +38,7 @@
           "name": "gpt-4o",
           "version": "2024-08-06",
           "skuName": "Standard",
-          "capacity": 300
+          "capacity": 100
         }
       ]
     },
@@ -47,7 +47,7 @@
         "name": "text-embedding-3-large",
         "version": "1",
         "skuName": "Standard",
-        "capacity": 150
+        "capacity": 100
       }
     },
     "embeddingModelDimension": {

@@ -1,3 +1,4 @@
+import base64
 import os
 from typing import Any, Dict, Iterator, List, Optional, Union
 
@@ -66,24 +67,23 @@ class AzureDocumentIntelligenceManager:
         self.document_analysis_client = DocumentIntelligenceClient(
             endpoint=self.azure_endpoint,
             credential=AzureKeyCredential(self.azure_key),
+            api_version="2024-11-30",
             headers={"x-ms-useragent": "langchain-parser/1.0.0"},
             polling_interval=30,
         )
 
         # Initialize AzureBlobManager only if all required parameters are provided
-        # if storage_account_name and container_name and account_key:
-        #     self.blob_manager = AzureBlobManager(
-        #         storage_account_name=storage_account_name,
-        #         container_name=container_name,
-        #         account_key=account_key,
-        #     )
-        # else:
-        #     self.blob_manager = None
-        self.blob_manager = AzureBlobManager(
-            storage_account_name=storage_account_name,
-            container_name=container_name,
-            account_key=account_key,
-        )
+        if storage_account_name and container_name and account_key:
+            self.blob_manager = AzureBlobManager(
+                storage_account_name=storage_account_name,
+                container_name=container_name,
+                account_key=account_key,
+            )
+        else:
+            # self.blob_manager = None
+            self.blob_manager = AzureBlobManager(
+                storage_account_name=storage_account_name, container_name=container_name
+            )
 
     def analyze_document(
         self,
@@ -166,24 +166,20 @@ class AzureDocumentIntelligenceManager:
                 content_bytes = self.blob_manager.download_blob_to_bytes(document_input)
                 try:
                     analyze_request = AnalyzeDocumentRequest(bytes_source=content_bytes)
-                    try:
-                        poller = self.document_analysis_client.begin_analyze_document(
-                            model_id=model_type,
-                            analyze_request=analyze_request,
-                            pages=pages,
-                            locale=locale,
-                            string_index_type=string_index_type,
-                            features=features,
-                            query_fields=query_fields,
-                            output_content_format=output_format
-                            if output_format
-                            else "text",
-                            content_type=content_type,
-                            **kwargs,
-                        )
-                    except Exception as e:
-                        logger.error(f"Error analyzing document: {e}")
-                        raise
+                    poller = self.document_analysis_client.begin_analyze_document(
+                        model_id=model_type,
+                        analyze_request=analyze_request,
+                        pages=pages,
+                        locale=locale,
+                        string_index_type=string_index_type,
+                        features=features,
+                        query_fields=query_fields,
+                        output_content_format=output_format
+                        if output_format
+                        else "text",
+                        content_type=content_type,
+                        **kwargs,
+                    )
                 except Exception as e:
                     logger.error(f"Error analyzing document from blob URL: {e}")
                     raise

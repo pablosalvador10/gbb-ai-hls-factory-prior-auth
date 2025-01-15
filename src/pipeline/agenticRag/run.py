@@ -367,7 +367,7 @@ class AgenticRAG:
 
                 # Step 3: Evaluation
                 evaluation = await self.evaluate_results(expanded_query, search_results)
-                if not evaluation["retry"]:
+                if not evaluation.get("retry", True):
                     self.logger.info(
                         f"{self.prefix}Evaluation successful. Policies: {evaluation.get('policies', [])}"
                     )
