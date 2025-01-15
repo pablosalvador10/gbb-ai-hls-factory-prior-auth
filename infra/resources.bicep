@@ -262,10 +262,10 @@ var containerEnvArray = [
     name: 'AZURE_AI_SEARCH_ADMIN_KEY'
     value: searchService.outputs.searchServicePrimaryKey
   }
-  {
-    name: 'AZURE_STORAGE_ACCOUNT_KEY'
-    value: storageAccount.outputs.storageAccountPrimaryKey
-  }
+  // {
+  //   name: 'AZURE_STORAGE_ACCOUNT_KEY'
+  //   value: storageAccount.outputs.storageAccountPrimaryKey
+  // }
   {
     name: 'AZURE_STORAGE_CONNECTION_STRING'
     value: storageConnString
@@ -490,7 +490,7 @@ output AZURE_SEARCH_SERVICE_NAME string = searchService.outputs.searchServiceNam
 output AZURE_SEARCH_INDEX_NAME string = 'ai-policies-index'
 output AZURE_AI_SEARCH_ADMIN_KEY string = searchService.outputs.searchServicePrimaryKey
 output AZURE_AI_SEARCH_SERVICE_ENDPOINT string = searchService.outputs.searchServiceEndpoint
-output AZURE_STORAGE_ACCOUNT_KEY string = storageAccount.outputs.storageAccountPrimaryKey
+output AZURE_STORAGE_ACCOUNT_KEY string = ''
 output AZURE_BLOB_CONTAINER_NAME string = storageBlobContainerName
 output AZURE_STORAGE_ACCOUNT_NAME string = storageAccount.outputs.storageAccountName
 output AZURE_STORAGE_CONNECTION_STRING string = storageConnString
