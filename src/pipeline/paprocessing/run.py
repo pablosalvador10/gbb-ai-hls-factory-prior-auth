@@ -143,6 +143,9 @@ class PAProcessingPipeline:
         self.document_intelligence_client = AzureDocumentIntelligenceManager(
             azure_endpoint=azure_document_intelligence_endpoint,
             azure_key=azure_document_intelligence_key,
+            storage_account_name=azure_blob_storage_account_name,
+            container_name=self.container_name,
+            account_key=azure_blob_storage_account_key,
         )
         self.blob_manager = AzureBlobManager(
             storage_account_name=self.azure_blob_storage_account_name,
@@ -324,13 +327,14 @@ class PAProcessingPipeline:
             The text content of the downloaded policy document.
         """
         try:
-            blob_content = self.blob_manager.download_blob_to_bytes(blob_url)
-            if blob_content is None:
-                raise Exception(f"Failed to download blob from URL: {blob_url}")
-            self.logger.info(f"Blob content downloaded successfully from {blob_url}")
+            # blob_content = self.blob_manager.download_blob_to_bytes(blob_url)
+            # if blob_content is None:
+            #     raise Exception(f"Failed to download blob from URL: {blob_url}")
+            # self.logger.info(f"Blob content downloaded successfully from {blob_url}")
 
             policy_text = self.document_intelligence_client.analyze_document(
-                document_input=blob_content,
+                # document_input=blob_content,
+                document_input=blob_url,
                 model_type="prebuilt-layout",
                 output_format="markdown",
             )

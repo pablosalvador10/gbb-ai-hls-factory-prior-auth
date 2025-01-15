@@ -59,16 +59,10 @@ class AzureDocumentIntelligenceManager:
                 "Azure endpoint and key must be provided either as parameters or in environment variables."
             )
 
-        credential = DefaultAzureCredential()
-        if self.azure_key:
-            credential = AzureKeyCredential(self.azure_key)
+        # credential = DefaultAzureCredential()
+        # if self.azure_key:
+        #   credential = AzureKeyCredential(self.azure_key)
 
-        self.document_analysis_client = DocumentIntelligenceClient(
-            endpoint=self.azure_endpoint,
-            credential=credential,
-            headers={"x-ms-useragent": "langchain-parser/1.0.0"},
-            polling_interval=30,
-        )
         self.document_analysis_client = DocumentIntelligenceClient(
             endpoint=self.azure_endpoint,
             credential=AzureKeyCredential(self.azure_key),
@@ -77,14 +71,19 @@ class AzureDocumentIntelligenceManager:
         )
 
         # Initialize AzureBlobManager only if all required parameters are provided
-        if storage_account_name and container_name and account_key:
-            self.blob_manager = AzureBlobManager(
-                storage_account_name=storage_account_name,
-                container_name=container_name,
-                account_key=account_key,
-            )
-        else:
-            self.blob_manager = None
+        # if storage_account_name and container_name and account_key:
+        #     self.blob_manager = AzureBlobManager(
+        #         storage_account_name=storage_account_name,
+        #         container_name=container_name,
+        #         account_key=account_key,
+        #     )
+        # else:
+        #     self.blob_manager = None
+        self.blob_manager = AzureBlobManager(
+            storage_account_name=storage_account_name,
+            container_name=container_name,
+            account_key=account_key,
+        )
 
     def analyze_document(
         self,
@@ -165,18 +164,29 @@ class AzureDocumentIntelligenceManager:
             elif "blob.core.windows.net" in document_input:
                 logger.info("Blob URL detected. Extracting content.")
                 content_bytes = self.blob_manager.download_blob_to_bytes(document_input)
-                poller = self.document_analysis_client.begin_analyze_document(
-                    model_id=model_type,
-                    analyze_request=AnalyzeDocumentRequest(base64_source=content_bytes),
-                    pages=pages,
-                    locale=locale,
-                    string_index_type=string_index_type,
-                    features=features,
-                    query_fields=query_fields,
-                    output_content_format=output_format if output_format else "text",
-                    content_type=content_type,
-                    **kwargs,
-                )
+                try:
+                    analyze_request = AnalyzeDocumentRequest(bytes_source=content_bytes)
+                    try:
+                        poller = self.document_analysis_client.begin_analyze_document(
+                            model_id=model_type,
+                            analyze_request=analyze_request,
+                            pages=pages,
+                            locale=locale,
+                            string_index_type=string_index_type,
+                            features=features,
+                            query_fields=query_fields,
+                            output_content_format=output_format
+                            if output_format
+                            else "text",
+                            content_type=content_type,
+                            **kwargs,
+                        )
+                    except Exception as e:
+                        logger.error(f"Error analyzing document: {e}")
+                        raise
+                except Exception as e:
+                    logger.error(f"Error analyzing document from blob URL: {e}")
+                    raise
             else:
                 poller = self.document_analysis_client.begin_analyze_document(
                     model_id=model_type,

@@ -50,9 +50,9 @@ class AzureDocumentIntelligenceManager:
 
         self.blob_manager = AzureBlobDataExtractor(container_name=container_name)
 
-        credential = DefaultAzureCredential()
-        if self.azure_key:
-            credential = AzureKeyCredential(self.azure_key)
+        # credential = DefaultAzureCredential()
+        # if self.azure_key:
+        credential = AzureKeyCredential(self.azure_key)
 
         self.document_analysis_client = DocumentIntelligenceClient(
             endpoint=self.azure_endpoint,
