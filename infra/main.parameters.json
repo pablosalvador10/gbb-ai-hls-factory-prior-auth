@@ -8,9 +8,6 @@
     "location": {
       "value": "${AZURE_LOCATION:-eastus}"
     },
-    "cosmosAdministratorPassword": {
-      "value": "${cosmosAdministratorPassword}"
-    },
     "priorAuthName": {
       "value": "${PRIOR_AUTH_NAME:-priorAuth}"
     },
@@ -40,8 +37,8 @@
         {
           "name": "gpt-4o",
           "version": "2024-08-06",
-          "skuName": "GlobalStandard",
-          "capacity": 25
+          "skuName": "Standard",
+          "capacity": 300
         }
       ]
     },
@@ -50,7 +47,7 @@
         "name": "text-embedding-3-large",
         "version": "1",
         "skuName": "Standard",
-        "capacity": 25
+        "capacity": 150
       }
     },
     "embeddingModelDimension": {

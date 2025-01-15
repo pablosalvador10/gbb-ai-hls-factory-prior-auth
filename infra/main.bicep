@@ -15,9 +15,9 @@ param frontendExists bool = false
 @description('Flag to indicate if Backend app image exists. This is managed by AZD')
 param backendExists bool = false
 
-@description('Admin password for the cluster')
-@secure()
-param cosmosAdministratorPassword string
+// @description('Admin password for the cluster')
+// @secure()
+// param cosmosAdministratorPassword string
 
 @minLength(2)
 @maxLength(12)
@@ -38,8 +38,8 @@ param chatCompletionModels array = [
   {
     name: 'gpt-4o'
     version: '2024-08-06'
-    skuName: 'GlobalStandard'
-    capacity: 25
+    skuName: 'Standard'
+    capacity: 500
   }
 ]
 
@@ -48,7 +48,7 @@ param embeddingModel object = {
     name: 'text-embedding-3-large'
     version: '1'
     skuName: 'Standard'
-    capacity: 16
+    capacity: 500
 }
 
 @description('Embedding model size for the OpenAI Embedding deployment')
@@ -74,13 +74,13 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
 }
 
 
-module resources 'priorAuthInfra.bicep' = {
+module resources 'resources.bicep' = {
   scope: rg
   name: 'resources'
   params: {
     // Required Parameters
     tags: azd_tags
-    cosmosAdministratorPassword: cosmosAdministratorPassword
+    // cosmosAdministratorPassword: cosmosAdministratorPassword
     // Optional Parameters
     frontendExists: frontendExists
     backendExists: backendExists

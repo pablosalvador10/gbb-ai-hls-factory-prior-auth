@@ -12,9 +12,9 @@ param priorAuthName string = 'priorAuth'
 @description('Set of tags to apply to all resources.')
 param tags object = {}
 
-@description('Admin password for the cluster')
-@secure()
-param cosmosAdministratorPassword string
+// @description('Admin password for the cluster')
+// @secure()
+// param cosmosAdministratorPassword string
 
 param cosmosDbCollectionName string = 'temp'
 param cosmosDbDatabaseName string = 'priorauthsessions'
@@ -119,13 +119,12 @@ module storageAccount 'modules/data/storage.bicep' = {
 }
 
 // @TODO: Replace with AVM module
-module cosmosDb 'modules/data/cosmos-mongo.bicep' = {
+module cosmosDb 'modules/data/cosmos-mongo-ru.bicep' = {
   name: 'cosmosdb-${name}-${uniqueSuffix}-deployment'
   params: {
     aiServiceName: 'cosmosdb-${name}-${uniqueSuffix}'
     location: location
     tags: tags
-    cosmosAdministratorPassword: cosmosAdministratorPassword
   }
 }
 
@@ -212,11 +211,11 @@ var containerEnvArray = [
   }
   {
     name: 'AZURE_OPENAI_CHAT_DEPLOYMENT_ID'
-    value: 'gpt-4o'
+    value: chatCompletionModels[0].name
   }
   {
     name: 'AZURE_OPENAI_CHAT_DEPLOYMENT_01'
-    value: 'gpt-4o'
+    value:chatCompletionModels[0].name
   }
   {
     name: 'AZURE_OPENAI_EMBEDDING_DIMENSIONS'
@@ -484,8 +483,8 @@ module indexInitializationJob 'br/public:avm/res/app/job:0.5.1' = {
 output AZURE_OPENAI_ENDPOINT string = openAiService.outputs.aiServicesEndpoint
 output AZURE_OPENAI_API_VERSION string = openAiApiVersion
 output AZURE_OPENAI_EMBEDDING_DEPLOYMENT string = embeddingModel.name
-output AZURE_OPENAI_CHAT_DEPLOYMENT_ID string = 'gpt-4o'
-output AZURE_OPENAI_CHAT_DEPLOYMENT_01 string = 'gpt-4o'
+output AZURE_OPENAI_CHAT_DEPLOYMENT_ID string = chatCompletionModels[0].name
+output AZURE_OPENAI_CHAT_DEPLOYMENT_01 string = chatCompletionModels[0].name
 output AZURE_OPENAI_EMBEDDING_DIMENSIONS string = embeddingModelDimension
 output AZURE_SEARCH_SERVICE_NAME string = searchService.outputs.searchServiceName
 output AZURE_SEARCH_INDEX_NAME string = 'ai-policies-index'
