@@ -16,7 +16,7 @@ from .users.manager import auth_backend, current_active_user, fastapi_users
 @asynccontextmanager
 async def lifespan(_application: FastAPI) -> AsyncGenerator:
     # startup
-    await init_beanie(db, document_models=[User])
+    await init_beanie(db, document_models=[User], skip_indexes=True)
     yield
     # shutdown
 
