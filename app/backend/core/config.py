@@ -36,8 +36,8 @@ class Config(CustomBaseSettings):
 
 settings = Config()
 #
-print("settings.DATABASE_URL:", settings.DATABASE_URL)
-print("settings.DATABASE_ASYNC_URL:", settings.DATABASE_ASYNC_URL)
+#print("settings.DATABASE_URL:", settings.DATABASE_URL)
+#print("settings.DATABASE_ASYNC_URL:", settings.DATABASE_ASYNC_URL)
 
 app_configs: dict[str, Any] = {"title": "Prior Auth API App"}
 
