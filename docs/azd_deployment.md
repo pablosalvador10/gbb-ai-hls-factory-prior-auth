@@ -135,8 +135,13 @@ After deployment, visit the service endpoints returned by `azd show`.
         ![Azure Portal Resource Group Deployment](./images/azp_help_deployments.png)
 
 1. **Configuration Errors**
-    - Ensure that all required environment variables are set correctly.
-    - Validate the syntax and structure of your `azure.yaml` and Bicep files.
+    1. **Check the AI Search Service**
+        - Verify if the index has been properly created by checking the `Indexes`, `Indexer`, and `Data Source` tabs.
+        - Ensure the managed identity used by the AI Search service has `Storage Blob Data Reader` or higher level of access to the storage account.
+        - If no documents are populated, and there aren't any `Indexes`, `Indexers`, or `Data Sources` populated, then the `Container App Job` may have failed.
+            - To retry or debug the `Container App Job`:
+            ![Azure Portal Container App Job Retry](./images/azp_help_containerjoblogs_1.png)
+
 
 1. **Pipeline Failures**
     - Check the pipeline logs for detailed error messages.
@@ -145,13 +150,14 @@ After deployment, visit the service endpoints returned by `azd show`.
 1. **Application Errors**
     - View the detailed logs of the Container App:
         - First, navigate to either the `Logs` or `Log Stream`
+            ![Azure Portal Container App Logs Navigation1](./images/azp_help_containerlogs_1.png)
+
+            - `Log Stream` will stream the live data from your container, however when there are issues with the container itself, you may not be able to see the `console` log due to the container being in a failed state.
+
             - `Logs` will display all of your `system` and `console` logs, but there is a minor delay in the data.
 
                 ![Azure Portal Getting Logs](images/azp_help_containerlogs_2.png)
 
-            - `Log Stream` will stream the live data from your container, however when there are issues with the container itself, you may not be able to see the `console` log due to the container being in a failed state.
-
-                ![Azure Portal Container App Logs Navigation1](./images/azp_help_containerlogs_1.png)
 
 
 For more detailed troubleshooting steps, refer to the specific service documentation linked in the Troubleshooting section.
