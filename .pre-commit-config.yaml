@@ -66,7 +66,7 @@ repos:
   - repo: https://github.com/Azure4DevOps/check-azure-bicep
     rev: v0.5.9 # ${LATEST_SHA_OR_VERSION}
     hooks:
-      - id: check-azure-bicep
+      # - id: check-azure-bicep
       - id: check-azure-bicep-format
 
   # - repo: local

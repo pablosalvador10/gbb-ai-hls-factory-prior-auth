@@ -119,6 +119,19 @@ This guide covers how to deploy the project end-to-end with Azure Developer CLI 
       </table>
     </details>
 
+    > **Note:** If you don't have access to the `o1` model yet, try using the `gpt-4o` configuration for the `chatCompletionModels`
+     ```json
+        "chatCompletionModels": {
+          "value": [
+            {
+              "name": "gpt-4o",
+              "version": "2024-08-06",
+              "skuName": "Standard",
+              "capacity": 100
+            }
+          ]
+        },
+      ```
 1. **Deploy**
     - Use `azd up` to provision and deploy.
     - If you want to deploy only a specific service, use `azd deploy <service>` (e.g., `azd deploy frontend`).
