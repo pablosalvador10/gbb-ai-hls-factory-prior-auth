@@ -1,10 +1,10 @@
 ---
 layout: default
-title: "One-Click End-to-End Deployment"
+title: "End-to-End Deployment using Azure Developer CLI"
 nav_order: 7
 ---
 
-# Azure Developer CLI (azd) Deployment Guide
+# End-to-End Deployment using Azure Developer CLI
 
 ## Table of Contents
 
