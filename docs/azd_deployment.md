@@ -34,12 +34,97 @@ This guide covers how to deploy the project end-to-end with Azure Developer CLI 
 
 ## Deployment Steps
 
+1. **Adjust Infra Config [Optional]**
+  - You can use the variables provided in the defaults in [infra/main.parameters.json](../infra/main.parameters.json), or you can choose to provide your own desired values.
+
+    <details>
+      <summary><strong style="color: cyan; cursor: pointer;">Main Deployment Parameters (main.bicep)</strong></summary>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter name</th>
+            <th>Required</th>
+            <th>Description</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>environmentName</td>
+            <td>Yes</td>
+            <td>Name of the environment that can be used as part of naming resource convention</td>
+            <td><code>dev</code></td>
+          </tr>
+          <tr>
+            <td>location</td>
+            <td>Yes</td>
+            <td>Primary location for all resources. Not all regions are supported due to OpenAI limitations</td>
+            <td><code>eastus</code></td>
+          </tr>
+          <tr>
+            <td>frontendExists</td>
+            <td>No</td>
+            <td>Flag to indicate if Frontend app image exists. This is managed by AZD</td>
+            <td><code>false</code></td>
+          </tr>
+          <tr>
+            <td>backendExists</td>
+            <td>No</td>
+            <td>Flag to indicate if Backend app image exists. This is managed by AZD</td>
+            <td><code>false</code></td>
+          </tr>
+          <tr>
+            <td>priorAuthName</td>
+            <td>No</td>
+            <td>Name for the PriorAuth resource and used to derive the name of dependent resources.</td>
+            <td><code>priorAuth</code></td>
+          </tr>
+          <tr>
+            <td>tags</td>
+            <td>No</td>
+            <td>Tags to be applied to all resources</td>
+            <td><code>{ environment: 'dev', location: 'eastus' }</code></td>
+          </tr>
+          <tr>
+            <td>openAiApiVersion</td>
+            <td>No</td>
+            <td>API Version of the OpenAI API</td>
+            <td><code>2024-08-01-preview</code></td>
+          </tr>
+          <tr>
+            <td>chatCompletionModels</td>
+            <td>No</td>
+            <td>List of completion models to be deployed to the OpenAI account.</td>
+            <td><code>[ { name: 'o1', version: '2024-12-17', skuName: 'Standard', capacity: 100 } ]</code></td>
+          </tr>
+          <tr>
+            <td>embeddingModel</td>
+            <td>No</td>
+            <td>List of embedding models to be deployed to the OpenAI account.</td>
+            <td><code>{ name: 'text-embedding-3-large', version: '1', skuName: 'Standard', capacity: 50 }</code></td>
+          </tr>
+          <tr>
+            <td>embeddingModelDimension</td>
+            <td>No</td>
+            <td>Embedding model size for the OpenAI Embedding deployment</td>
+            <td><code>3072</code></td>
+          </tr>
+          <tr>
+            <td>storageBlobContainerName</td>
+            <td>No</td>
+            <td>Storage Blob Container name to land the files for Prior Auth</td>
+            <td><code>default</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </details>
+
 1. **Deploy**
     - Use `azd up` to provision and deploy.
     - If you want to deploy only a specific service, use `azd deploy <service>` (e.g., `azd deploy frontend`).
     - This provisions defined resources in [infra/main.bicep](../infra/main.bicep) and deploys services defined in [azure.yaml](../azure.yaml#L6), generating a `.env` file for local development.
 
-2. **Verify Deployment**
+1. **Verify Deployment**
     - Run `azd show` to confirm resources and endpoints.
 
 ## Customizing or Configuring AZD Deployments
