@@ -1,7 +1,7 @@
 import time
+import logging
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
-import sentry_sdk
 #
 from beanie import init_beanie
 from fastapi import FastAPI, Request, Depends
@@ -12,6 +12,13 @@ from .core.database import User, db
 from app.backend.core.config import settings, app_configs
 from .users.schemas import UserCreate, UserRead, UserUpdate
 from .users.manager import auth_backend, current_active_user, fastapi_users
+from src.pipeline.paprocessing.run import PAProcessingPipeline
+from .paprocessing.models import PAProcessingRequest
+#
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+#
+pa_pipeline = PAProcessingPipeline(send_cloud_logs=True)
 
 @asynccontextmanager
 async def lifespan(_application: FastAPI) -> AsyncGenerator:
@@ -30,12 +37,6 @@ app.add_middleware(
     allow_methods=("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"),
     allow_headers=settings.CORS_HEADERS,
 )
-
-if settings.ENVIRONMENT.is_deployed:
-    sentry_sdk.init(
-        dsn=settings.SENTRY_DSN,
-        environment=settings.ENVIRONMENT,
-    )
 
 # middleware test
 @app.middleware("http")
@@ -70,7 +71,6 @@ app.include_router(
     tags=["users"],
 )
 
-
 @app.get("/authenticated-route")
 async def authenticated_route(user: User = Depends(current_active_user)):
     return {"message": f"Hello {user.email}!"}
@@ -79,3 +79,50 @@ async def authenticated_route(user: User = Depends(current_active_user)):
 async def healthcheck() -> dict[str, str]:
     #
     return {"status": "We are doing ok!"}
+
+
+@app.post("/process_pa")
+async def process_pa(request: PAProcessingRequest):
+    """
+    Run the Prior Authorization Processing Pipeline.
+
+    - Accepts file paths or URLs to PDF documents.
+    - Optionally takes a case ID to group them.
+    - Optionally sets `use_o1` to True if you want to use the O1 model for final determination.
+
+    Returns JSON with the pipeline results, including:
+      - caseId
+      - message about success/failure
+      - pipeline results stored in `pa_pipeline.results[caseId]`.
+    """
+    start_time = time.time()
+
+    if request.caseId:
+        pa_pipeline.caseId = request.caseId
+
+    try:
+        logger.info(
+            f"Starting PAProcessingPipeline.run() for caseId={pa_pipeline.caseId}"
+        )
+        
+        print(request.uploaded_files)
+
+        await pa_pipeline.run(
+            uploaded_files=request.uploaded_files,
+            streamlit=request.streamlit,
+            caseId=request.caseId,
+            use_o1=request.use_o1,
+        )
+
+        results_for_case = pa_pipeline.results.get(pa_pipeline.caseId, {})
+        elapsed = round(time.time() - start_time, 2)
+
+        return {
+            "caseId": pa_pipeline.caseId,
+            "message": f"PA processing completed in {elapsed} seconds.",
+            "results": results_for_case,
+        }
+
+    except Exception as e:
+        logger.error(f"Failed to process PA request: {str(e)}", exc_info=True)
+        return {"caseId": pa_pipeline.caseId, "error": str(e), "results": {}}
