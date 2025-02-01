@@ -107,10 +107,13 @@ async def process_pa(request: PAProcessingRequest):
         
         print(request.uploaded_files)
 
+        # Validate and sanitize input data
+        sanitized_files = [file for file in request.uploaded_files if file.endswith('.pdf')]
+        
         await pa_pipeline.run(
-            uploaded_files=request.uploaded_files,
+            uploaded_files=sanitized_files,
             streamlit=request.streamlit,
-            caseId=request.caseId,
+            caseId=request.caseId if request.caseId is not None else "",
             use_o1=request.use_o1,
         )
 
