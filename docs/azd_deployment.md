@@ -130,7 +130,7 @@ This guide covers how to deploy the project end-to-end with Azure Developer CLI 
               "capacity": 100
             }
           ]
-        },
+        }
       ```
 1. **Deploy**
     - Use `azd up` to provision and deploy.
