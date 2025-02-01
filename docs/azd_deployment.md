@@ -38,7 +38,7 @@ This guide covers how to deploy the project end-to-end with Azure Developer CLI 
   - You can use the variables provided in the defaults in [infra/main.parameters.json](https://github.com/pablosalvador10/gbb-ai-hls-factory-prior-auth/blob/main/infra/main.parameters.json), or you can choose to provide your own desired values.
 
     <details>
-      <summary><strong style="color: cyan; cursor: pointer;">Main Deployment Parameters (main.bicep)</strong></summary>
+      <summary><strong style="color: blue; cursor: pointer;">Main Deployment Parameters (main.bicep)</strong></summary>
       <table>
         <thead>
           <tr>
@@ -191,11 +191,11 @@ jobs:
   build:
      runs-on: ubuntu-latest
      env:
-        AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-        AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
-        AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+        AZURE_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
+        AZURE_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
+        AZURE_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+        AZURE_ENV_NAME: "${{ vars.AZURE_ENV_NAME }}"
+        AZURE_LOCATION: "${{ vars.AZURE_LOCATION }}"
      steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -212,7 +212,7 @@ jobs:
           id: provision
           run: azd up --no-prompt
           env:
-             AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
+             AZD_INITIAL_ENVIRONMENT_CONFIG: "${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}"
 ```
 
 ### Verify Deployment
@@ -223,7 +223,9 @@ After deployment, visit the service endpoints returned by `azd show`.
 
 
 1. **Authentication Errors**
-    - Ensure that your Azure CLI is logged in with the correct account. (`az account show`)
+    - Ensure that your Azure CLI is logged in with the correct account.
+      - run `az account show` to check your local azure credentials
+      - run `az login` or `azd auth login` to refresh your credentials
     - Verify that the service principal or managed identity has the necessary permissions.
 
 1. **Resource Provisioning Failures**
