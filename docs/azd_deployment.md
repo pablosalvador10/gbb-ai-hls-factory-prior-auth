@@ -35,7 +35,7 @@ This guide covers how to deploy the project end-to-end with Azure Developer CLI 
 ## Deployment Steps
 
 1. **Adjust Infra Config [Optional]**
-  - You can use the variables provided in the defaults in [infra/main.parameters.json](../infra/main.parameters.json), or you can choose to provide your own desired values.
+  - You can use the variables provided in the defaults in [infra/main.parameters.json](https://github.com/pablosalvador10/gbb-ai-hls-factory-prior-auth/blob/main/infra/main.parameters.json), or you can choose to provide your own desired values.
 
     <details>
       <summary><strong style="color: cyan; cursor: pointer;">Main Deployment Parameters (main.bicep)</strong></summary>
@@ -135,7 +135,7 @@ This guide covers how to deploy the project end-to-end with Azure Developer CLI 
 1. **Deploy**
     - Use `azd up` to provision and deploy.
     - If you want to deploy only a specific service, use `azd deploy <service>` (e.g., `azd deploy frontend`).
-    - This provisions defined resources in [infra/main.bicep](../infra/main.bicep) and deploys services defined in [azure.yaml](../azure.yaml#L6), generating a `.env` file for local development.
+    - This provisions defined resources in [infra/main.bicep](https://github.com/pablosalvador10/gbb-ai-hls-factory-prior-auth/blob/main/infra/main.bicep) and deploys services defined in [azure.yaml](https://github.com/pablosalvador10/gbb-ai-hls-factory-prior-auth/blob/main/azure.yaml#L6), generating a `.env` file for local development.
 
 1. **Verify Deployment**
     - Run `azd show` to confirm resources and endpoints.
@@ -162,7 +162,7 @@ You can automate deployment with azd-generated pipelines.
 1. **Create a Pipeline**
     - Run `azd pipeline config` to generate pipeline files for GitHub Actions.
 2. **Use Existing Pipelines**
-    - Reference [.github/workflows/azd_deploy.yml](../.github/workflows/azd_deploy.yml) for GitHub Actions.
+    - Reference [.github/workflows/azd_deploy.yml](https://github.com/pablosalvador10/gbb-ai-hls-factory-prior-auth/blob/main/.github/workflows/azd_deploy.yml) for GitHub Actions.
 
 ### Required Secrets for Federated Workload Identities
 
