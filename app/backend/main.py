@@ -134,4 +134,4 @@ async def process_pa(request: PAProcessingRequest):
 
     except Exception as e:
         logger.error(f"Failed to process PA request: {str(e)}", exc_info=True)
-        return {"caseId": pa_pipeline.caseId, "error": str(e), "results": {}}
+        return {"caseId": pa_pipeline.caseId, "error": "An internal error has occurred. Please try again later.", "results": {}}
