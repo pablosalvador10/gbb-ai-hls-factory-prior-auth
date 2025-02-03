@@ -3,6 +3,7 @@ name: Code Quality and Tests 🚀
 on:
   push:
     branches:
+      - hotfix/cicd-fixes #TODO: REMOVE ME WHEN READY TO MERGE
       - main
       - staging
 
@@ -37,7 +38,7 @@ jobs:
         run: isort --check-only --profile black .
 
       - name: Run Black Check 🌚
-        run: black --check .
+        run: black --check --config pyproject.toml .
 
       # - name: Run flake8 ✅
         # run: flake8 . --max-line-length=124
