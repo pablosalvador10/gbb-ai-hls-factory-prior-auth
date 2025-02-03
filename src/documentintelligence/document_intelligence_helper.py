@@ -174,9 +174,9 @@ class AzureDocumentIntelligenceManager:
                         string_index_type=string_index_type,
                         features=features,
                         query_fields=query_fields,
-                        output_content_format=output_format
-                        if output_format
-                        else "text",
+                        output_content_format=(
+                            output_format if output_format else "text"
+                        ),
                         content_type=content_type,
                         **kwargs,
                     )
