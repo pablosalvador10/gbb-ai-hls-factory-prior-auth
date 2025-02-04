@@ -1,11 +1,11 @@
 name: Code Quality and Tests 🚀
 
 on:
-  push:
+  pull_request:
     branches:
-      - hotfix/cicd-fixes #TODO: REMOVE ME WHEN READY TO MERGE
       - main
       - staging
+
 
 jobs:
   quality-checks:
@@ -40,11 +40,11 @@ jobs:
       - name: Run Black Check 🌚
         run: black --check --config pyproject.toml .
 
-      # - name: Run flake8 ✅
-        # run: flake8 . --max-line-length=124
+      - name: Run flake8 ✅
+        run: flake8 . --extend-ignore E501 --config pyproject.toml --max-line-length=124
 
-      # - name: Run ruff Check 🧼
-      #   run: ruff --fix --exit-non-zero-on-fix .
+      - name: Run ruff Check 🧼
+        run: ruff --fix --exit-non-zero-on-fix .
 
       - name: Run interrogate Check 🔍
         run: interrogate src -v -i --fail-under=60 -e '**/__init__.py'
