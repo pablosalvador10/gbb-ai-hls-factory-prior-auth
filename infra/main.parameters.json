@@ -27,8 +27,8 @@
     "chatCompletionModels": {
       "value": [
         {
-          "name": "gpt-4o",
-          "version": "2024-08-06",
+          "name": "o1",
+          "version": "2024-12-17",
           "skuName": "Standard",
           "capacity": 100
         }
