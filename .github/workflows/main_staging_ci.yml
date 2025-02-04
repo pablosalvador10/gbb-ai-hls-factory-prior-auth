@@ -1,5 +1,9 @@
 name: Code Quality and Tests 🚀
 
+permissions:
+  contents: read
+  pull-requests: write
+
 on:
   pull_request:
     branches:
@@ -27,7 +31,7 @@ jobs:
           conda list
           conda install -c anaconda click
           pip install -r requirements-codequality.txt
-          pip install -r requirements.txt
+          # pip install -r requirements.txt
 
       - name: Setup Node 🔧
         uses: actions/setup-node@v2

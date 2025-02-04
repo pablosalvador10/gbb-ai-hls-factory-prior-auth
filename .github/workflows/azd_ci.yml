@@ -1,5 +1,8 @@
 name: AZD Infra Preview Test
 
+permissions:
+    contents: read
+    pull-requests: write
 
 on:
     pull_request:
@@ -22,7 +25,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Install azd
-      uses: Azure/setup-azd@v1.0.0
+      uses: Azure/setup-azd@ae0f8b5482eeac61e940f447327d84c73beb8b1e # Pin to specific commit hash
 
     - name: Log in with Azure (Federated Credentials)
       run: |
