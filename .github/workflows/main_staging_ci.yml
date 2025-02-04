@@ -47,6 +47,9 @@ jobs:
       - name: Remove importlib-metadata backport
         run: pip uninstall -y importlib-metadata
 
+      - name: Upgrade flake8 and plugins
+        run: pip install --upgrade flake8 flake8-bugbear flake8-comprehensions
+
       - name: Run flake8 ✅
         run: flake8 . --extend-ignore E501 --config pyproject.toml --max-line-length=124
 
