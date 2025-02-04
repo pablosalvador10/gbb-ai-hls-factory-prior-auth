@@ -44,7 +44,6 @@ skips = ["B101", "B601"]
 
 [tool.black]
 line-length = 88
-ignore = ["E203", "E501"]
 
 [tool.mypy]
 ignore_missing_imports = true
