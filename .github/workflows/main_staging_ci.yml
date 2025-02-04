@@ -23,13 +23,14 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           environment-file: environment.yaml # Create an environment.yml file
-          activate-environment: ''
+          activate-environment: 'vector-indexing-azureaisearch'
           auto-activate-base: false
 
       - name: Activate Conda Node 🔧
         run: |
           conda list
           conda install -c anaconda click
+
           pip install -r requirements.txt
           pip install -r requirements-codequality.txt
 
@@ -43,12 +44,6 @@ jobs:
 
       - name: Run Black Check 🌚
         run: black --check --config pyproject.toml .
-
-      - name: Remove importlib-metadata backport
-        run: pip uninstall -y importlib-metadata
-
-      - name: Upgrade flake8 and plugins
-        run: pip install --upgrade flake8 flake8-bugbear flake8-comprehensions
 
       - name: Run flake8 ✅
         run: flake8 . --extend-ignore E501 --config pyproject.toml --max-line-length=124
