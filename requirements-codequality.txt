@@ -10,3 +10,4 @@ pylint
 pytest
 pytest-cov
 black[jupyter]
+types-PyYAML
