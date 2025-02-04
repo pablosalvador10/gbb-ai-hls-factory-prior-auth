@@ -54,9 +54,10 @@ jobs:
         shell: bash -el {0}
         run: flake8 . --extend-ignore E501 --config pyproject.toml --max-line-length=124
 
-      - name: Run ruff Check 🧼
-        shell: bash -el {0}
-        run: ruff --fix --exit-non-zero-on-fix .
+      # Commenting out due to conflicting formatting/linting with black
+      # - name: Run ruff Check 🧼
+      #   shell: bash -el {0}
+      #   run: ruff --fix --exit-non-zero-on-fix .
 
       - name: Run interrogate Check 🔍
         shell: bash -el {0}
