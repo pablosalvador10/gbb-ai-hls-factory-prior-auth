@@ -30,8 +30,8 @@ jobs:
         run: |
           conda list
           conda install -c anaconda click
+          pip install -r requirements.txt
           pip install -r requirements-codequality.txt
-          # pip install -r requirements.txt
 
       - name: Setup Node 🔧
         uses: actions/setup-node@v2
@@ -43,6 +43,9 @@ jobs:
 
       - name: Run Black Check 🌚
         run: black --check --config pyproject.toml .
+
+      - name: Remove importlib-metadata backport
+        run: pip uninstall -y importlib-metadata
 
       - name: Run flake8 ✅
         run: flake8 . --extend-ignore E501 --config pyproject.toml --max-line-length=124
