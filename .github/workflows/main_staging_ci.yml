@@ -24,15 +24,17 @@ jobs:
         with:
           environment-file: environment.yaml # Create an environment.yml file
           activate-environment: 'vector-indexing-azureaisearch'
+          python-version: 3.10
           auto-activate-base: false
 
       - name: Activate Conda Node 🔧
         run: |
+          conda info
           conda list
           conda install -c anaconda click
 
-          pip install -r requirements.txt
-          pip install -r requirements-codequality.txt
+          # pip install -r requirements.txt
+          # pip install -r requirements-codequality.txt
 
       - name: Setup Node 🔧
         uses: actions/setup-node@v2
