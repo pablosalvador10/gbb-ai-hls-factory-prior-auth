@@ -130,15 +130,21 @@ With the AutoAuth SDK, you have the flexibility to automate end-to-end Prior Aut
 
 Please read through our [contributing guidelines](./CONTRIBUTING.md). Directions are included for opening issues, coding standards, and notes on development.
 
-### 💻 Core Team
+### 💻 Steering Committee
 
 |                                                                                                                                                                                                                                                                        |                                                                                                                                                                                                                                         |                                                                                                                                                                                                                                            |
 |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | <a href="https://github.com/pablosalvador10"><img src="https://avatars.githubusercontent.com/u/31255154?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Pablo Salvador Lopez](https://github.com/pablosalvador10)** <br> *App Development WG* | <a href="https://github.com/marcjimz"><img src="https://avatars.githubusercontent.com/u/4607826?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Marcin Jimenez](https://github.com/marcjimz)** <br> *AIOps WG* | <a href="https://github.com/marcjimz"><img src="https://avatars.githubusercontent.com/u/94473824?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Jin Lee](https://github.com/marcjimz)** <br> *App Deployment WG* |
 
-### ✨ Contributors
+### ✨ Contributions
 
-Thanks goes to these wonderful people:
+💙 *We appreciate all contributors for their internal and external efforts in making this project better!*
+
+|  |  |  |                                                                                                                                                                                                                                  |                                                                                                                                                                                                                      |
+|---|---|---|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <a href="https://github.com/pablosalvador10"><img src="https://avatars.githubusercontent.com/u/31255154?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Pablo Salvador Lopez](https://github.com/pablosalvador10)** | <a href="https://github.com/marcjimz"><img src="https://avatars.githubusercontent.com/u/4607826?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Marcin Jimenez](https://github.com/marcjimz)** | <a href="https://github.com/marcjimz"><img src="https://avatars.githubusercontent.com/u/94473824?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Jin Lee](https://github.com/marcjimz)** | <a href="https://github.com/jkaresha"><img src="https://avatars.githubusercontent.com/u/780467?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Joe Karasha](https://github.com/joe-Karasha)** | <a href="https://github.com/naren-msft"><img src="https://avatars.githubusercontent.com/u/4607827?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Narendra Amirineni](https://github.com/naren-msft)** |
+
+#### Metrics
 
 - Repository: ['pablosalvador10/gbb-ai-hls-factory-prior-auth']
 
@@ -154,8 +160,6 @@ Thanks goes to these wonderful people:
 | @jkarasha | 3 | True | https://github.com/pablosalvador10/gbb-ai-hls-factory-prior-auth/commits?author=jkarasha&since=2023-01-01&until=2025-02-10 |
 
  _this file was generated by the [Contributors GitHub Action](https://github.com/github/contributors)_
-
-💙 *We appreciate all contributors for their internal and external efforts in making this project better!*
 
 **License:** [MIT License](./LICENSE)
 
