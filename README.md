@@ -130,6 +130,7 @@ With the AutoAuth SDK, you have the flexibility to automate end-to-end Prior Aut
 
 Please read through our [contributing guidelines](./CONTRIBUTING.md). Directions are included for opening issues, coding standards, and notes on development.
 
+
 ### 💻 Steering Committee
 
 |                                                                                                                                                                                                                                                                        |                                                                                                                                                                                                                                         |                                                                                                                                                                                                                                            |
