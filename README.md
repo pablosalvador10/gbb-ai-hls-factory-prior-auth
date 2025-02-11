@@ -120,7 +120,7 @@ With the AutoAuth SDK, you have the flexibility to automate end-to-end Prior Aut
 ## ✅ What's Next?
 
 ### Near-Term Goals.
-- [ ] **Improve One-Click Deployment with Integrated Security and Landing Zone**: Enhance a one-click deployment solution a managed landing zone for streamlined setup and management.
+- [x] **Improve One-Click Deployment with Integrated Security and Landing Zone**: Enhance a one-click deployment solution a managed landing zone for streamlined setup and management.
 - [ ] **Multi-Language & Region Support**: Adapt LLM models and policies for multiple languages and healthcare regulatory environments.
 - [ ] **Agentic Framework Leveraging Semantic Kernel**: Integrate the Agentic framework component using the Semantic Kernel as the core for context-aware and intelligent agent orchestration.
 - [ ] **API Management (APIM) Integration**: Introduce APIM for secure, scalable, and controlled access to the service’s endpoints.
@@ -135,8 +135,6 @@ Please read through our [contributing guidelines](./CONTRIBUTING.md). Directions
 |                                                                                                                                                                                                                                                                        |                                                                                                                                                                                                                                         |                                                                                                                                                                                                                                            |
 |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | <a href="https://github.com/pablosalvador10"><img src="https://avatars.githubusercontent.com/u/31255154?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Pablo Salvador Lopez](https://github.com/pablosalvador10)** <br> *App Development WG* | <a href="https://github.com/marcjimz"><img src="https://avatars.githubusercontent.com/u/4607826?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Marcin Jimenez](https://github.com/marcjimz)** <br> *AIOps WG* | <a href="https://github.com/marcjimz"><img src="https://avatars.githubusercontent.com/u/94473824?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Jin Lee](https://github.com/marcjimz)** <br> *App Deployment WG* |
-
----
 
 ### ✨ Contributors
 
