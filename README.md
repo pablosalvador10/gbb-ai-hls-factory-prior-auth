@@ -128,41 +128,64 @@ With the AutoAuth SDK, you have the flexibility to automate end-to-end Prior Aut
 
 ## 🤝 Contributors & License
 
-### Contributors
+### Steering Committee
+
+### 📌 Steering Committee
 
 <table>
-<tr>
-    <td align="center" style="word-wrap: break-word; width: 150px; height: 150px">
-        <a href=https://github.com/pablosalvador10>
-            <img src=https://avatars.githubusercontent.com/u/31255154?v=4 width="100" style="border-radius:50%;padding-top:10px" alt="Pablo Salvador Lopez"/>
-            <br />
-            <sub style="font-size:14px"><b>Pablo Salvador Lopez</b></sub>
+  <thead>
+    <tr>
+      <th align="center">Name</th>
+      <th align="center">Working Groups</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <!-- Pablo: App Deployment WG & App Development -->
+      <td align="center" style="word-wrap: break-word; width: 150px; height: 150px">
+        <a href="https://github.com/pablosalvador10">
+          <img src="https://avatars.githubusercontent.com/u/31255154?v=4" width="100" style="border-radius:50%;padding-top:10px" alt="Pablo Salvador Lopez"/>
+          <br />
+          <sub style="font-size:14px"><b>Pablo Salvador Lopez</b></sub>
         </a>
-    </td>
-    <td align="center" style="word-wrap: break-word; width: 150px; height: 150px">
-        <a href=https://github.com/naren-msft>
-            <img src=https://avatars.githubusercontent.com/u/4607827?v=4 width="100" style="border-radius:50%;padding-top:10px" alt="Narendra Amirineni"/>
-            <br />
-            <sub style="font-size:14px"><b>Narendra Amirineni</b></sub>
-        </a>
-    </td>
-    <td align="center" style="word-wrap: break-word; width: 150px; height: 150px">
-        <a href=https://github.com/marcjimz>
-            <img src=https://avatars.githubusercontent.com/u/94473824?v=4 width="100" style="border-radius:50%;padding-top:10px" alt="Jin Lee"/>
-            <br />
-            <sub style="font-size:14px"><b>Jin Lee</b></sub>
-        </a>
-    </td>
-    <td align="center" style="word-wrap: break-word; width: 150px; height: 150px">
-        <a href=https://github.com/marcjimz>
-            <img src=https://avatars.githubusercontent.com/u/4607826?v=4 width="100" style="border-radius:50%;padding-top:10px" alt="Marcin Jimenez"/>
-            <br />
-            <sub style="font-size:14px"><b>Marcin Jimenez</b></sub>
-        </a>
-    </td>
+      </td>
+      <td align="center">App Deployment WG <br> App Development</td>
+    </tr>
     
-</tr>
+    <tr>
+      <!-- Marcin: LLMOps WG -->
+      <td align="center" style="word-wrap: break-word; width: 150px; height: 150px">
+        <a href="https://github.com/marcjimz">
+          <img src="https://avatars.githubusercontent.com/u/4607826?v=4" width="100" style="border-radius:50%;padding-top:10px" alt="Marcin Jimenez"/>
+          <br />
+          <sub style="font-size:14px"><b>Marcin Jimenez</b></sub>
+        </a>
+      </td>
+      <td align="center">LLMOps WG</td>
+    </tr>
+  </tbody>
 </table>
+
+---
+
+### 🤖 Contributors
+
+<table>
+  <tr>
+    
+    <td align="center" style="word-wrap: break-word; width: 150px; height: 150px">
+      <a href="https://github.com/marcjimz">
+        <img src="https://avatars.githubusercontent.com/u/94473824?v=4" width="100" style="border-radius:50%;padding-top:10px" alt="Jin Lee"/>
+        <br />
+        <sub style="font-size:14px"><b>Jin Lee</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
+
+<div style="text-align: center; padding-top: 10px;">
+  <em>We appreciate all contributors for their internal and external efforts in making this project better! 💙</em>
+</div>
 
 **License:** [MIT License](./LICENSE)
 
