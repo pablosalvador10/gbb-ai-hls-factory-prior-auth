@@ -140,10 +140,10 @@ Please read through our [contributing guidelines](./CONTRIBUTING.md). Directions
 
 💙 *We appreciate all contributors for their internal and external efforts in making this project better!*
 
-|  |  |  |                                                                                                                                                                                                                                  |                                                                                                                                                                                                                      |
-|---|---|---|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|  |  |  |  |  |
+|---|---|---|---|---|
 | <a href="https://github.com/pablosalvador10"><img src="https://avatars.githubusercontent.com/u/31255154?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Pablo Salvador Lopez](https://github.com/pablosalvador10)** | <a href="https://github.com/marcjimz"><img src="https://avatars.githubusercontent.com/u/4607826?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Marcin Jimenez](https://github.com/marcjimz)** | <a href="https://github.com/marcjimz"><img src="https://avatars.githubusercontent.com/u/94473824?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Jin Lee](https://github.com/marcjimz)** | <a href="https://github.com/jkaresha"><img src="https://avatars.githubusercontent.com/u/780467?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Joe Karasha](https://github.com/joe-Karasha)** | <a href="https://github.com/naren-msft"><img src="https://avatars.githubusercontent.com/u/4607827?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Narendra Amirineni](https://github.com/naren-msft)** |
-
+| <a href="https://github.com/juan-trujillo"><img src="https://avatars.githubusercontent.com/u/6484680?v=4" width="100" style="border-radius:50%;padding-top:10px"></a> <br> **[Juan Trujillo](https://github.com/juan-trujillo)** |  |  |  |  |
 #### Metrics
 
 - Repository: ['pablosalvador10/gbb-ai-hls-factory-prior-auth']
