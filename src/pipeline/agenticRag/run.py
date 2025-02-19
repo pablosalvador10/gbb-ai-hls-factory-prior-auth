@@ -17,7 +17,7 @@ from src.documentintelligence.document_intelligence_helper import (
 from src.pipeline.promptEngineering.prompt_manager import PromptManager
 from src.pipeline.utils import load_config
 from src.storage.blob_helper import AzureBlobManager
-from utils.ml_logging import get_logger
+from src.utils.ml_logging import get_logger
 
 
 class AgenticRAG:
@@ -389,4 +389,6 @@ class AgenticRAG:
         self.logger.error(
             f"{self.prefix}Max retries reached. Returning empty list of policies."
         )
-        return {"query": None, "policies": [], "evaluation": None}
+
+        # this was updated to return information about the evaluation, even in failure we need to have the reasoning.
+        return {"query": expanded_query, "policies": evaluation.get("policies", []), "evaluation": evaluation}
