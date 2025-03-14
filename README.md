@@ -5,7 +5,7 @@
 <br>
 
 > **Important Notice:**  
-> New development and ongoing enhancements have migrated to the [Microsoft AutoAuth Repository](https://github.com/microsoft/autoauth). For the latest updates and improved features, please refer to that repository.
+> New development and ongoing enhancements have migrated to the [Microsoft AutoAuth Repository](https://github.com/Azure-Samples/autoauth-solution-accelerator). For the latest updates and improved features, please refer to that repository.
 
 🚀 **Welcome! Ready to streamline your Prior Authorization process?** Click below to get started with your deployment and unlock the full potential of AutoAuth.
 
